@@ -54,7 +54,9 @@ class MapScreenState extends State<MapScreen> {
                       ? _kRoma
                       : CameraPosition(
                           target: LatLng(
-                              snapshot.data.latitude, snapshot.data.longitude),
+                            snapshot.data.latitude,
+                            snapshot.data.longitude,
+                          ),
                           zoom: 16,
                         ),
                   zoomControlsEnabled: false,
@@ -64,8 +66,10 @@ class MapScreenState extends State<MapScreen> {
                   },
                   myLocationEnabled: true,
                   myLocationButtonEnabled: false,
+                  compassEnabled: false,
+                  buildingsEnabled: false,
                 )
-              : Center();
+              : Center(); // issue (#2)
         },
       ),
     );
