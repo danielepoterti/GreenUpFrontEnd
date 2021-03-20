@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -17,14 +17,14 @@ class MapScreenState extends State<MapScreen> {
     zoom: 16,
   );
 
-  Future<LocationPermission> getPermission() async {
-    return await Geolocator.requestPermission();
+  Future<PermissionStatus> getPermission() async {
+    return await Permission.location.request();
   }
 
   Future<Position> getLocation() async {
     return getPermission().then((result) async {
-      if (result == LocationPermission.always ||
-          result == LocationPermission.whileInUse) {
+      if (result == PermissionStatus.granted) {
+        //va gestita anche la parte iOS
         return await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
         );
@@ -60,7 +60,6 @@ class MapScreenState extends State<MapScreen> {
                 ),
               );
               controller.dispose();
-              
             }
           });
         },
