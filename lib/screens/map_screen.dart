@@ -59,7 +59,7 @@ class MapScreenState extends State<MapScreen> {
                   ),
                 ),
               );
-              //controller.dispose();
+              controller.dispose();
               
             }
           });
