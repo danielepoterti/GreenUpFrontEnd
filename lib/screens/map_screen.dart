@@ -14,7 +14,7 @@ class MapScreenState extends State<MapScreen> {
 
   static final CameraPosition _kRoma = CameraPosition(
     target: LatLng(41.893056, 12.482778),
-    zoom: 16,
+    zoom: 11,
   );
 
   Future<PermissionStatus> getPermission() async {
@@ -42,29 +42,31 @@ class MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     //final Position initialPosition = Provider.of<Position>(context);
+
     return new Scaffold(
-      body: GoogleMap(
-        initialCameraPosition: _kRoma,
-        zoomControlsEnabled: false,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-          _setMapstyle(controller);
-          getLocation().then((value) {
-            if (value != null) {
-              controller.moveCamera(
-                CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                    target: LatLng(value.latitude, value.longitude),
-                    zoom: 16,
-                  ),
-                ),
-              );
-              controller.dispose();
-            }
-          });
+      body: FutureBuilder(
+        future: getLocation(),
+        builder: (context, snapshot) {
+          print(snapshot.data);
+          return snapshot.connectionState == ConnectionState.done
+              ? GoogleMap(
+                  initialCameraPosition: snapshot.hasData == false
+                      ? _kRoma
+                      : CameraPosition(
+                          target: LatLng(
+                              snapshot.data.latitude, snapshot.data.longitude),
+                          zoom: 16,
+                        ),
+                  zoomControlsEnabled: false,
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller.complete(controller);
+                    _setMapstyle(controller);
+                  },
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                )
+              : Center();
         },
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
       ),
     );
   }
