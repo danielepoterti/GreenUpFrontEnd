@@ -52,7 +52,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/map_style.json
-    
+    - assets/images/chargingAvailable128px.png
+    - assets/images/chargingUnavailable.png
+    - assets/images/chargingOccupied.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
