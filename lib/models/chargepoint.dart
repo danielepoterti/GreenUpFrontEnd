@@ -25,9 +25,11 @@ enum Status {
 
 enum PlugType {
   type1,
-  type2,
-  type3,
   chademo,
+  ccsCombo2,
+  type2,
+  type3A,
+  type2S,
 }
 
 enum PowerType {
@@ -35,12 +37,19 @@ enum PowerType {
   dc,
 }
 
+enum PowerSupply{
+  kW7,
+  kW22,
+  kW50,
+
+}
+
 class ChargePoint {
   final String id;           // chargeId
   final Address address;     // indirizzo
   final Status status;       // status (si suppone un solo plug)
   final PlugType plug;       // tipo plug
-  final double maxPower;     // numero kW massimi
+  final PowerSupply maxPower;     // numero kW massimi
   final PowerType powerType; // AC o DC
   final double cost;         // costo a chilowatt
   final LatLng position;     // coordinate geografiche
