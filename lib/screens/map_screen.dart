@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:green_up/services/geolocator_service.dart';
+
 
 class MapScreen extends StatefulWidget {
   @override
@@ -10,6 +10,8 @@ class MapScreen extends StatefulWidget {
 }
 
 class MapScreenState extends State<MapScreen> {
+
+  final GeolocatorService geo = GeolocatorService();
   Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _kRoma = CameraPosition(
@@ -17,21 +19,7 @@ class MapScreenState extends State<MapScreen> {
     zoom: 11,
   );
 
-  Future<PermissionStatus> getPermission() async {
-    return await Permission.location.request();
-  }
-
-  Future<Position> getLocation() async {
-    return getPermission().then((result) async {
-      if (result == PermissionStatus.granted) {
-        //va gestita anche la parte iOS
-        return await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-        );
-      } else
-        return null;
-    });
-  }
+  
 
   void _setMapstyle(GoogleMapController controller) async {
     String style = await DefaultAssetBundle.of(context)
@@ -41,11 +29,9 @@ class MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //final Position initialPosition = Provider.of<Position>(context);
-
     return new Scaffold(
       body: FutureBuilder(
-        future: getLocation(),
+        future: geo.getLocation(),
         builder: (context, snapshot) {
           print(snapshot.data);
           return snapshot.connectionState == ConnectionState.done
