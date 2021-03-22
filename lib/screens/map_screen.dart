@@ -1,17 +1,108 @@
 import 'dart:async';
+import 'package:fluster/fluster.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
 import 'package:green_up/services/geolocator_service.dart';
+import 'package:green_up/services/map_helper.dart';
+import 'package:green_up/services/map_marker.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class MapScreen extends StatefulWidget {
+  AsyncSnapshot<dynamic> snapshot;
+  MapScreen({@required this.snapshot});
+
   @override
   State<MapScreen> createState() => MapScreenState();
 }
 
 class MapScreenState extends State<MapScreen> {
-  bool isInit = true;
+  /// Set of displayed markers and cluster markers on the map
+  final Set<Marker> _markers = Set();
+
+  /// Minimum zoom at which the markers will cluster
+  final int _minClusterZoom = 0;
+
+  /// Maximum zoom at which the markers will cluster
+  final int _maxClusterZoom = 19;
+
+  /// [Fluster] instance used to manage the clusters
+  Fluster<MapMarker> _clusterManager;
+
+  /// Current map zoom. Initial zoom will be 15, street level
+  double _currentZoom = 15;
+
+  /// Map loading flag
+  bool _isMapLoading = true;
+
+  /// Markers loading flag
+  bool _areMarkersLoading = true;
+
+  /// Color of the cluster circle
+  final Color _clusterColor = Colors.blue;
+
+  /// Color of the cluster text
+  final Color _clusterTextColor = Colors.white;
+
+  /// Inits [Fluster] and all the markers with network images and updates the loading state.
+  void _initMarkers() async {
+    final List<MapMarker> markers = [];
+
+    markers.addAll(data.markers);
+
+    // for (LatLng markerLocation in _markerLocations) {
+    //   final BitmapDescriptor markerImage =
+    //       await MapHelper.getMarkerImageFromUrl(_markerImageUrl);
+
+    //   markers.add(
+    //     MapMarker(
+    //       id: _markerLocations.indexOf(markerLocation).toString(),
+    //       position: markerLocation,
+    //       icon: markerImage,
+    //     ),
+    //   );
+    // }
+
+    _clusterManager = await MapHelper.initClusterManager(
+      markers,
+      _minClusterZoom,
+      _maxClusterZoom,
+    );
+
+    await _updateMarkers();
+  }
+
+  /// Gets the markers and clusters to be displayed on the map for the current zoom level and
+  /// updates state.
+  Future<void> _updateMarkers([double updatedZoom]) async {
+    if (_clusterManager == null || updatedZoom == _currentZoom) return;
+
+    if (updatedZoom != null) {
+      _currentZoom = updatedZoom;
+    }
+
+    setState(() {
+      _areMarkersLoading = true;
+    });
+
+    final updatedMarkers = await MapHelper.getClusterMarkers(
+      _clusterManager,
+      _currentZoom,
+      _clusterColor,
+      _clusterTextColor,
+      80,
+    );
+
+    _markers
+      ..clear()
+      ..addAll(updatedMarkers);
+
+    setState(() {
+      _areMarkersLoading = false;
+    });
+  }
+
   final GeolocatorService geo = GeolocatorService();
   Completer<GoogleMapController> _controller = Completer();
 
@@ -20,19 +111,21 @@ class MapScreenState extends State<MapScreen> {
     zoom: 11,
   );
 
+  String _style;
+
   void _setMapstyle(GoogleMapController controller) async {
-    String style = await DefaultAssetBundle.of(context)
-        .loadString('./assets/map_style.json');
-    controller.setMapStyle(style);
+    controller.setMapStyle(_style);
   }
 
-  List<Marker> markers = [];
+  //List<Marker> markers = [];
   ChargePoints data;
   @override
   Future<void> didChangeDependencies() async {
     data = Provider.of<ChargePoints>(context);
+    _style = await DefaultAssetBundle.of(context)
+        .loadString('./assets/map_style.json');
+    await data.initIcons();
 
-    markers = await data.markers;
     super.didChangeDependencies();
   }
 
@@ -40,35 +133,42 @@ class MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     //List<Marker> markers = Provider.of<List<Marker>>(context);
 
-    print(markers);
+    var snapshot = widget.snapshot;
+
+    print(_markers);
     return new Scaffold(
-      body: FutureBuilder(
-        future: geo.getLocation(),
-        builder: (context, snapshot) {
-          return snapshot.connectionState == ConnectionState.done
-              ? GoogleMap(
-                  initialCameraPosition: snapshot.hasData == false
-                      ? _kRoma
-                      : CameraPosition(
-                          target: LatLng(
-                            snapshot.data.latitude,
-                            snapshot.data.longitude,
-                          ),
-                          zoom: 16,
-                        ),
-                  markers: Set<Marker>.of(markers),
-                  zoomControlsEnabled: false,
-                  onMapCreated: (GoogleMapController controller) async {
-                    _controller.complete(controller);
-                    _setMapstyle(controller);
-                  },
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: false,
-                  compassEnabled: false,
-                  buildingsEnabled: false,
-                )
-              : Center(); // issue (#2)
+      body: GoogleMap(
+        initialCameraPosition: snapshot.hasData == false
+            ? _kRoma
+            : CameraPosition(
+                target: LatLng(
+                  snapshot.data.latitude,
+                  snapshot.data.longitude,
+                ),
+                zoom: _currentZoom,
+              ),
+        markers: Set<Marker>.of(_markers),
+        zoomControlsEnabled: false,
+        onMapCreated: (GoogleMapController controller) {
+          _setMapstyle(controller);
+          try {
+            _controller.complete(controller);
+          } catch (e) {
+            print("map rebuilded");
+            throw e;
+          }
+
+          setState(() {
+            _isMapLoading = false;
+          });
+
+          _initMarkers();
         },
+        onCameraMove: (position) => _updateMarkers(position.zoom),
+        myLocationEnabled: true,
+        myLocationButtonEnabled: false,
+        compassEnabled: false,
+        buildingsEnabled: false,
       ),
     );
   }

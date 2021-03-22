@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
+import 'package:green_up/services/geolocator_service.dart';
 import 'package:provider/provider.dart';
 import 'screens/map_screen.dart';
 
@@ -15,11 +16,22 @@ class MyApp extends StatelessWidget {
         //   create: (_) async => await ChargePoints().markers,
         //   initialData: [],
         // ),
-        ChangeNotifierProvider(create: (BuildContext context) { return ChargePoints(); },)
+        ChangeNotifierProvider(
+          create: (BuildContext context) {
+            return ChargePoints();
+          },
+        )
       ],
       child: MaterialApp(
         title: 'GreenUp Demo',
-        home: MapScreen(),
+        home: FutureBuilder(
+          future: GeolocatorService.getLocation(),
+          builder: (context, snapshot) {
+            return snapshot.connectionState == ConnectionState.done
+                ? MapScreen(snapshot: snapshot)
+                : Center(); //schermata caricamento (#2)
+          },
+        ),
       ),
     );
   }

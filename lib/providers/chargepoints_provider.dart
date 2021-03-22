@@ -1,10 +1,13 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_up/models/chargepoint_model.dart';
+import 'package:green_up/services/map_marker.dart';
 
 class ChargePoints with ChangeNotifier {
+  BitmapDescriptor _iconAvailable;
+  BitmapDescriptor _iconOccupied;
+  BitmapDescriptor _iconUnavailable;
+  
   List<ChargePoint> _chargePoints = [
     ChargePoint(
       id: 'cp01',
@@ -22,6 +25,22 @@ class ChargePoints with ChangeNotifier {
       cost: 0,
       position: const LatLng(45.594100, 9.192028),
     ),
+    ChargePoint(
+      id: 'cp02',
+      address: Address(
+        city: 'Nova Milanese',
+        country: 'Italia',
+        houseNumber: '18',
+        street: 'Via Sarajevo',
+        zipCode: '20834',
+      ),
+      status: Status.available,
+      plug: PlugType.type2,
+      maxPower: PowerSupply.kW22,
+      powerType: PowerType.ac,
+      cost: 0,
+      position: const LatLng(45.59348806009438, 9.191465264449239),
+    ),
   ];
 
   List<ChargePoint> get chargePoints {
@@ -29,7 +48,6 @@ class ChargePoints with ChangeNotifier {
   }
 
   Future<BitmapDescriptor> _setMarkerIcon(Status status) async {
-    
     return await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(),
         status == Status.available
@@ -41,23 +59,27 @@ class ChargePoints with ChangeNotifier {
                     : '');
   }
 
-  Future<List<Marker>> get markers async {
+  initIcons() async {
+    _iconAvailable = await _setMarkerIcon(Status.available);
+    _iconOccupied = await _setMarkerIcon(Status.occupied);
+    _iconUnavailable = await _setMarkerIcon(Status.unavailable);
+  }
+
+  List<MapMarker> get markers  {
     
-    BitmapDescriptor iconAvailable = await _setMarkerIcon(Status.available);
-    BitmapDescriptor iconOccupied = await _setMarkerIcon(Status.occupied);
-    BitmapDescriptor iconUnavailable = await _setMarkerIcon(Status.unavailable);
-    List<Marker> chargeMarkers = [];
+
+    List<MapMarker> chargeMarkers = [];
     _chargePoints.forEach((element) {
       chargeMarkers.add(
-        Marker(
-          markerId: MarkerId(element.id),
+        MapMarker(
+          id: element.id,
           position: element.position,
           icon: element.status == Status.available
-              ? iconAvailable
+              ? _iconAvailable
               : element.status == Status.unavailable
-                  ? iconUnavailable
+                  ? _iconUnavailable
                   : element.status == Status.occupied
-                      ? iconOccupied
+                      ? _iconOccupied
                       : BitmapDescriptor.defaultMarker,
         ),
       );
