@@ -161,6 +161,7 @@ class MapHelper {
     Color clusterColor,
     Color clusterTextColor,
     int clusterWidth,
+    List<double> bbox,
   ) {
     assert(currentZoom != null);
     assert(clusterColor != null);
@@ -169,8 +170,9 @@ class MapHelper {
 
     if (clusterManager == null) return Future.value([]);
 
-    return Future.wait(clusterManager.clusters(
-        [-180, -85, 180, 85], currentZoom.toInt()).map((mapMarker) async {
+    return Future.wait(clusterManager
+        .clusters(bbox, currentZoom.toInt())
+        .map((mapMarker) async {
       if (mapMarker.isCluster) {
         mapMarker.icon = await _getClusterMarker(
           mapMarker.pointsSize,

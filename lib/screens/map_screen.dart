@@ -21,6 +21,9 @@ class MapScreenState extends State<MapScreen> {
   //TODO: fix duplicated variables
   double previousZoom = 0;
   double currentZoomLevel = 0;
+  GoogleMapController conti;
+
+  List<double> box = [0, 0, 0, 0];
 
   bool isInit = true;
 
@@ -82,44 +85,52 @@ class MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _updateZoomLevel([double updatedZoom]) async {
-    //print(updatedZoom);
-    if (updatedZoom != currentZoomLevel) {
-      previousZoom = currentZoomLevel;
-      currentZoomLevel = updatedZoom;
-    }
+    LatLngBounds area = await conti.getVisibleRegion();
+    box = [
+      area.southwest.longitude,
+      area.southwest.latitude,
+      area.northeast.longitude,
+      area.northeast.latitude
+    ];
+    currentZoomLevel = updatedZoom;
+    // if (updatedZoom != currentZoomLevel) {
+    //   previousZoom = currentZoomLevel;
+    //   currentZoomLevel = updatedZoom;
+    // }
   }
 
   /// Gets the markers and clusters to be displayed on the map for the current zoom level and
   /// updates state.
   Future<void> _updateMarkers() async {
-    if (currentZoomLevel != previousZoom) {
-      if (_clusterManager == null || currentZoomLevel == _currentZoom) return;
+    //if (currentZoomLevel != previousZoom) {
+    if (_clusterManager == null) return;
 
-      if (currentZoomLevel != null) {
-        _currentZoom = currentZoomLevel;
-      }
-
-      setState(() {
-        _areMarkersLoading = true;
-      });
-
-      final updatedMarkers = await MapHelper.getClusterMarkers(
-        _clusterManager,
-        _currentZoom,
-        _clusterColor,
-        _clusterTextColor,
-        80,
-      );
-
-      _markers
-        ..clear()
-        ..addAll(updatedMarkers);
-
-      setState(() {
-        _areMarkersLoading = false;
-      });
-      previousZoom = currentZoomLevel;
+    if (currentZoomLevel != null) {
+      _currentZoom = currentZoomLevel;
     }
+
+    setState(() {
+      _areMarkersLoading = true;
+    });
+    print('here');
+    final updatedMarkers = await MapHelper.getClusterMarkers(
+      _clusterManager,
+      currentZoomLevel,
+      _clusterColor,
+      _clusterTextColor,
+      80,
+      box,
+    );
+    print(updatedMarkers.length);
+    _markers
+      ..clear()
+      ..addAll(updatedMarkers);
+
+    setState(() {
+      _areMarkersLoading = false;
+    });
+    //previousZoom = currentZoomLevel;
+    //}
   }
 
   final GeolocatorService geo = GeolocatorService();
@@ -181,6 +192,7 @@ class MapScreenState extends State<MapScreen> {
         onMapCreated: (GoogleMapController controller) {
           print('onMapCreated---------------------------');
           _setMapstyle(controller);
+          conti = controller;
           try {
             _controller.complete(controller);
           } catch (e) {
