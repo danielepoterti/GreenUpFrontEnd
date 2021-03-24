@@ -17,7 +17,9 @@ class GeolocatorService {
           desiredAccuracy: LocationAccuracy.high,
         );
       } else
-        return null;
+        return await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
     });
   }
 }

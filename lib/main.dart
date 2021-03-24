@@ -4,6 +4,8 @@ import 'package:green_up/providers/chargepoints_provider.dart';
 import 'package:green_up/services/geolocator_service.dart';
 import 'package:provider/provider.dart';
 import 'screens/map_screen.dart';
+import 'screens/searchbar.dart';
+import 'wrapper.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
           future: GeolocatorService.getLocation(),
           builder: (context, snapshot) {
             return snapshot.connectionState == ConnectionState.done
-                ? MapScreen(snapshot: snapshot)
+                ? Wrapper(snapshot: snapshot)
                 : Center(); //schermata caricamento (#2)
           },
         ),
@@ -36,3 +38,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+//MapScreen(snapshot: snapshot)
