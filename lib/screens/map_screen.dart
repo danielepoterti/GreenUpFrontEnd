@@ -12,12 +12,16 @@ import 'package:provider/provider.dart';
 class MapScreen extends StatefulWidget {
   AsyncSnapshot<dynamic> snapshot;
   MapScreen({@required this.snapshot});
-
   @override
   State<MapScreen> createState() => MapScreenState();
 }
 
 class MapScreenState extends State<MapScreen> {
+  //var to handle cluster updating
+  //TODO: fix duplicated variables
+  double previousZoom = 0;
+  double currentZoomLevel = 0;
+
   bool isInit = true;
 
   /// Set of displayed markers and cluster markers on the map
@@ -77,34 +81,45 @@ class MapScreenState extends State<MapScreen> {
     print('_initMarkers---------------------------');
   }
 
+  Future<void> _updateZoomLevel([double updatedZoom]) async {
+    //print(updatedZoom);
+    if (updatedZoom != currentZoomLevel) {
+      previousZoom = currentZoomLevel;
+      currentZoomLevel = updatedZoom;
+    }
+  }
+
   /// Gets the markers and clusters to be displayed on the map for the current zoom level and
   /// updates state.
-  Future<void> _updateMarkers([double updatedZoom]) async {
-    if (_clusterManager == null || updatedZoom == _currentZoom) return;
+  Future<void> _updateMarkers() async {
+    if (currentZoomLevel != previousZoom) {
+      if (_clusterManager == null || currentZoomLevel == _currentZoom) return;
 
-    if (updatedZoom != null) {
-      _currentZoom = updatedZoom;
+      if (currentZoomLevel != null) {
+        _currentZoom = currentZoomLevel;
+      }
+
+      setState(() {
+        _areMarkersLoading = true;
+      });
+
+      final updatedMarkers = await MapHelper.getClusterMarkers(
+        _clusterManager,
+        _currentZoom,
+        _clusterColor,
+        _clusterTextColor,
+        80,
+      );
+
+      _markers
+        ..clear()
+        ..addAll(updatedMarkers);
+
+      setState(() {
+        _areMarkersLoading = false;
+      });
+      previousZoom = currentZoomLevel;
     }
-
-    setState(() {
-      _areMarkersLoading = true;
-    });
-
-    final updatedMarkers = await MapHelper.getClusterMarkers(
-      _clusterManager,
-      _currentZoom,
-      _clusterColor,
-      _clusterTextColor,
-      80,
-    );
-
-    _markers
-      ..clear()
-      ..addAll(updatedMarkers);
-
-    setState(() {
-      _areMarkersLoading = false;
-    });
   }
 
   final GeolocatorService geo = GeolocatorService();
@@ -165,7 +180,6 @@ class MapScreenState extends State<MapScreen> {
         zoomControlsEnabled: false,
         onMapCreated: (GoogleMapController controller) {
           print('onMapCreated---------------------------');
-
           _setMapstyle(controller);
           try {
             _controller.complete(controller);
@@ -180,7 +194,10 @@ class MapScreenState extends State<MapScreen> {
 
           print('onMapCreated---------------------------');
         },
-        onCameraMove: (position) => _updateMarkers(position.zoom),
+        //onCameraMove only update zoom level
+        onCameraMove: (position) => _updateZoomLevel(position.zoom),
+        //onCameraIdle is fired when camera stop moving
+        onCameraIdle: () => _updateMarkers(),
         myLocationEnabled: true,
         myLocationButtonEnabled: false,
         compassEnabled: false,
