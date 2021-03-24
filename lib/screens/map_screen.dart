@@ -18,6 +18,8 @@ class MapScreen extends StatefulWidget {
 }
 
 class MapScreenState extends State<MapScreen> {
+  bool isInit = true;
+
   /// Set of displayed markers and cluster markers on the map
   final Set<Marker> _markers = Set();
 
@@ -47,6 +49,7 @@ class MapScreenState extends State<MapScreen> {
 
   /// Inits [Fluster] and all the markers with network images and updates the loading state.
   void _initMarkers() async {
+    print('_initMarkers---------------------------');
     final List<MapMarker> markers = [];
 
     markers.addAll(data.markers);
@@ -71,6 +74,7 @@ class MapScreenState extends State<MapScreen> {
     );
 
     await _updateMarkers();
+    print('_initMarkers---------------------------');
   }
 
   /// Gets the markers and clusters to be displayed on the map for the current zoom level and
@@ -121,12 +125,22 @@ class MapScreenState extends State<MapScreen> {
   ChargePoints data;
   @override
   Future<void> didChangeDependencies() async {
-    data = Provider.of<ChargePoints>(context);
-    _style = await DefaultAssetBundle.of(context)
-        .loadString('./assets/map_style.json');
-    await data.initIcons();
+    print('didChangeDependencies---------------------------');
+
+    if (isInit) {
+      data = Provider.of<ChargePoints>(context);
+      _style = await DefaultAssetBundle.of(context)
+          .loadString('./assets/map_style.json');
+      await data.initIcons();
+      await data.initChargers(context).then((_) => _initMarkers());
+      //print(data.chargePoints);
+      setState(() {
+        isInit = !isInit;
+      });
+    }
 
     super.didChangeDependencies();
+    print('didChangeDependencies---------------------------');
   }
 
   @override
@@ -135,7 +149,7 @@ class MapScreenState extends State<MapScreen> {
 
     var snapshot = widget.snapshot;
 
-    print(_markers);
+    //print(_markers);
     return new Scaffold(
       body: GoogleMap(
         initialCameraPosition: snapshot.hasData == false
@@ -150,11 +164,13 @@ class MapScreenState extends State<MapScreen> {
         markers: Set<Marker>.of(_markers),
         zoomControlsEnabled: false,
         onMapCreated: (GoogleMapController controller) {
+          print('onMapCreated---------------------------');
+
           _setMapstyle(controller);
           try {
             _controller.complete(controller);
           } catch (e) {
-            print("map rebuilded");
+            // print("map rebuilded");
             throw e;
           }
 
@@ -162,7 +178,7 @@ class MapScreenState extends State<MapScreen> {
             _isMapLoading = false;
           });
 
-          _initMarkers();
+          print('onMapCreated---------------------------');
         },
         onCameraMove: (position) => _updateMarkers(position.zoom),
         myLocationEnabled: true,
