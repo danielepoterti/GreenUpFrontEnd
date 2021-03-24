@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:anim_search_bar/anim_search_bar.dart';
 
 class Search extends StatefulWidget {
+  String query = '';
   @override
   _SearchState createState() => _SearchState();
 }

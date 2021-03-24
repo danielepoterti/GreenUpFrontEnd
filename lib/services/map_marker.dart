@@ -11,6 +11,7 @@ import 'package:meta/meta.dart';
 class MapMarker extends Clusterable {
   final String id;
   final LatLng position;
+  Function handleMarkerClick;
   BitmapDescriptor icon;
 
   MapMarker({
@@ -21,6 +22,7 @@ class MapMarker extends Clusterable {
     clusterId,
     pointsSize,
     childMarkerId,
+    handleMarkerClick,
   }) : super(
           markerId: id,
           latitude: position.latitude,
@@ -32,6 +34,7 @@ class MapMarker extends Clusterable {
         );
 
   Marker toMarker() => Marker(
+        onTap: () => {handleMarkerClick(position.longitude, position.latitude)},
         markerId: MarkerId(isCluster ? 'cl_$id' : id),
         position: LatLng(
           position.latitude,

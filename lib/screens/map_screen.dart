@@ -8,7 +8,6 @@ import 'package:green_up/services/map_helper.dart';
 import 'package:green_up/services/map_marker.dart';
 import 'package:provider/provider.dart';
 
-// ignore: must_be_immutable
 class MapScreen extends StatefulWidget {
   AsyncSnapshot<dynamic> snapshot;
   MapScreen({@required this.snapshot});
@@ -17,7 +16,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class MapScreenState extends State<MapScreen> {
-  //var to handle cluster updating
   //TODO: fix duplicated variables
   double previousZoom = 0;
   double currentZoomLevel = 0;
@@ -54,28 +52,10 @@ class MapScreenState extends State<MapScreen> {
   /// Color of the cluster text
   final Color _clusterTextColor = Colors.white;
 
-  /// Inits [Fluster] and all the markers with network images and updates the loading state.
-  /// 
-  /// TODO: REFACTOR OF METHODS
+  // initialize markers
   void _initMarkers() async {
-    print('_initMarkers---------------------------');
     final List<MapMarker> markers = [];
-
     markers.addAll(data.markers);
-
-    // for (LatLng markerLocation in _markerLocations) {
-    //   final BitmapDescriptor markerImage =
-    //       await MapHelper.getMarkerImageFromUrl(_markerImageUrl);
-
-    //   markers.add(
-    //     MapMarker(
-    //       id: _markerLocations.indexOf(markerLocation).toString(),
-    //       position: markerLocation,
-    //       icon: markerImage,
-    //     ),
-    //   );
-    // }
-
     _clusterManager = await MapHelper.initClusterManager(
       markers,
       _minClusterZoom,
@@ -83,9 +63,9 @@ class MapScreenState extends State<MapScreen> {
     );
 
     await _updateMarkers();
-    print('_initMarkers---------------------------');
   }
 
+  // update current zoom level
   Future<void> _updateZoomLevel([double updatedZoom]) async {
     LatLngBounds area = await conti.getVisibleRegion();
     box = [
@@ -95,26 +75,19 @@ class MapScreenState extends State<MapScreen> {
       area.northeast.latitude
     ];
     currentZoomLevel = updatedZoom;
-    // if (updatedZoom != currentZoomLevel) {
-    //   previousZoom = currentZoomLevel;
-    //   currentZoomLevel = updatedZoom;
-    // }
   }
 
   /// Gets the markers and clusters to be displayed on the map for the current zoom level and
   /// updates state.
   Future<void> _updateMarkers() async {
-    //if (currentZoomLevel != previousZoom) {
     if (_clusterManager == null) return;
 
     if (currentZoomLevel != null) {
       _currentZoom = currentZoomLevel;
     }
-
     setState(() {
       _areMarkersLoading = true;
     });
-    print('here');
     final updatedMarkers = await MapHelper.getClusterMarkers(
       _clusterManager,
       currentZoomLevel,
@@ -122,27 +95,36 @@ class MapScreenState extends State<MapScreen> {
       _clusterTextColor,
       80,
       box,
+      _handleMarkerClick,
     );
-    print(updatedMarkers.length);
     _markers
       ..clear()
       ..addAll(updatedMarkers);
-
     setState(() {
       _areMarkersLoading = false;
     });
-    //previousZoom = currentZoomLevel;
-    //}
   }
 
-  void _currentLocation() async {
-   final GoogleMapController controller = await _controller.future;
-   
-
+  //callback that handle markers tap anz zoom on tapped marker
+  void _handleMarkerClick(double long, double lat) async {
+    final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         bearing: 0,
-        target: LatLng(widget.snapshot.data.latitude, widget.snapshot.data.longitude),
+        target: LatLng(lat, long),
+        zoom: 10.0,
+      ),
+    ));
+  }
+
+  //zoom on user current position
+  void _currentLocation() async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        bearing: 0,
+        target: LatLng(
+            widget.snapshot.data.latitude, widget.snapshot.data.longitude),
         zoom: 17.0,
       ),
     ));
@@ -162,35 +144,25 @@ class MapScreenState extends State<MapScreen> {
     controller.setMapStyle(_style);
   }
 
-  //List<Marker> markers = [];
   ChargePoints data;
   @override
   Future<void> didChangeDependencies() async {
-    print('didChangeDependencies---------------------------');
-
     if (isInit) {
       data = Provider.of<ChargePoints>(context);
       _style = await DefaultAssetBundle.of(context)
           .loadString('./assets/map_style.json');
       await data.initIcons();
       await data.initChargers(context).then((_) => _initMarkers());
-      //print(data.chargePoints);
       setState(() {
         isInit = !isInit;
       });
     }
-
     super.didChangeDependencies();
-    print('didChangeDependencies---------------------------');
   }
 
   @override
   Widget build(BuildContext context) {
-    //List<Marker> markers = Provider.of<List<Marker>>(context);
-
     var snapshot = widget.snapshot;
-
-    //print(_markers);
     return new Scaffold(
       body: GoogleMap(
         initialCameraPosition: snapshot.hasData == false
@@ -205,41 +177,37 @@ class MapScreenState extends State<MapScreen> {
         markers: Set<Marker>.of(_markers),
         zoomControlsEnabled: false,
         onMapCreated: (GoogleMapController controller) {
-          print('onMapCreated---------------------------');
           _setMapstyle(controller);
           conti = controller;
           try {
             _controller.complete(controller);
           } catch (e) {
-            // print("map rebuilded");
             throw e;
           }
-
           setState(() {
             _isMapLoading = false;
           });
-
-          print('onMapCreated---------------------------');
         },
-        //onCameraMove only update zoom level
         onCameraMove: (position) => _updateZoomLevel(position.zoom),
-        //onCameraIdle is fired when camera stop moving
         onCameraIdle: () => _updateMarkers(),
         myLocationEnabled: true,
         myLocationButtonEnabled: false,
         compassEnabled: false,
         buildingsEnabled: false,
-        
       ),
-      floatingActionButton: snapshot.hasData == true ? Padding(
-        padding: const EdgeInsets.only(bottom: 90.0),
-        child: FloatingActionButton(
-          backgroundColor: Colors.white,
-          onPressed: _currentLocation,
-          
-          child: Icon(Icons.location_searching_sharp, color: Colors.black,),
-        ),
-      ): null,
+      floatingActionButton: snapshot.hasData == true
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 90.0),
+              child: FloatingActionButton(
+                backgroundColor: Colors.white,
+                onPressed: _currentLocation,
+                child: Icon(
+                  Icons.location_searching_sharp,
+                  color: Colors.black,
+                ),
+              ),
+            )
+          : null,
     );
   }
 }

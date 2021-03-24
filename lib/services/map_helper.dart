@@ -156,13 +156,13 @@ class MapHelper {
   /// Gets a list of markers and clusters that reside within the visible bounding box for
   /// the given [currentZoom]. For more info check [Fluster.clusters].
   static Future<List<Marker>> getClusterMarkers(
-    Fluster<MapMarker> clusterManager,
-    double currentZoom,
-    Color clusterColor,
-    Color clusterTextColor,
-    int clusterWidth,
-    List<double> bbox,
-  ) {
+      Fluster<MapMarker> clusterManager,
+      double currentZoom,
+      Color clusterColor,
+      Color clusterTextColor,
+      int clusterWidth,
+      List<double> bbox,
+      Function _handleMarkerClick) {
     assert(currentZoom != null);
     assert(clusterColor != null);
     assert(clusterTextColor != null);
@@ -174,6 +174,7 @@ class MapHelper {
         .clusters(bbox, currentZoom.toInt())
         .map((mapMarker) async {
       if (mapMarker.isCluster) {
+        mapMarker.handleMarkerClick = _handleMarkerClick;
         mapMarker.icon = await _getClusterMarker(
           mapMarker.pointsSize,
           clusterColor,
