@@ -55,6 +55,8 @@ class MapScreenState extends State<MapScreen> {
   final Color _clusterTextColor = Colors.white;
 
   /// Inits [Fluster] and all the markers with network images and updates the loading state.
+  /// 
+  /// TODO: REFACTOR OF METHODS
   void _initMarkers() async {
     print('_initMarkers---------------------------');
     final List<MapMarker> markers = [];
@@ -131,6 +133,19 @@ class MapScreenState extends State<MapScreen> {
     });
     //previousZoom = currentZoomLevel;
     //}
+  }
+
+  void _currentLocation() async {
+   final GoogleMapController controller = await _controller.future;
+   
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        bearing: 0,
+        target: LatLng(widget.snapshot.data.latitude, widget.snapshot.data.longitude),
+        zoom: 17.0,
+      ),
+    ));
   }
 
   final GeolocatorService geo = GeolocatorService();
@@ -214,7 +229,17 @@ class MapScreenState extends State<MapScreen> {
         myLocationButtonEnabled: false,
         compassEnabled: false,
         buildingsEnabled: false,
+        
       ),
+      floatingActionButton: snapshot.hasData == true ? Padding(
+        padding: const EdgeInsets.only(bottom: 90.0),
+        child: FloatingActionButton(
+          backgroundColor: Colors.white,
+          onPressed: _currentLocation,
+          
+          child: Icon(Icons.location_searching_sharp, color: Colors.black,),
+        ),
+      ): null,
     );
   }
 }
