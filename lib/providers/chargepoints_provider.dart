@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_up/models/chargepoint_model.dart';
@@ -63,33 +63,47 @@ class ChargePoints with ChangeNotifier {
 
   initChargers(BuildContext context) async {
     print('initChargers------------------------------');
-    final json =
-        await DefaultAssetBundle.of(context).loadString("assets/data.json");
-    Map positionMap = jsonDecode(json);
+    final url = Uri.https(
+      'michelebanfi.github.io',
+      'data/data.json',
+    );
 
-    final List<ChargePoint> loadedChargers = [];
+    // final json =
+    //     await DefaultAssetBundle.of(context).loadString("assets/data.json");
+    // Map positionMap = jsonDecode(json);
 
-    positionMap['data'].forEach((element) {
-      return loadedChargers.add(
-        ChargePoint(
-          id: element['id'].toString(),
-          address: null,
-          status: Status.available,
-          plug: null,
-          maxPower: null,
-          powerType: null,
-          cost: null,
-          position: LatLng(element['lat'], element['long']),
-        ),
-      );
-    });
-    _chargePoints = loadedChargers;
+    try {
 
-    print('Chargers loaded');
+    final response = await http.get(url);
 
-    print('initChargers------------------------------');
+      final positionMap = json.decode(response.body) as Map<String, dynamic>;
 
-    notifyListeners();
+      //print(positionMap);
+
+      final List<ChargePoint> loadedChargers = [];
+
+      positionMap['data'].forEach((element) {
+        return loadedChargers.add(
+          ChargePoint(
+            id: element['id'].toString(),
+            address: null,
+            status: Status.available,
+            plug: null,
+            maxPower: null,
+            powerType: null,
+            cost: null,
+            position: LatLng(element['lat'], element['long']),
+          ),
+        );
+      });
+      _chargePoints = loadedChargers;
+
+      print('Chargers loaded');
+
+      print('initChargers------------------------------');
+
+      notifyListeners();
+    } catch (e) {}
   }
 
   initIcons() async {
