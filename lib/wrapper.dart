@@ -13,6 +13,7 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   int _page = 0;
   GlobalKey _bottomNavigationKey = GlobalKey();
+  CurvedNavigationBarState navBarState;
   Widget _router() {
     if (_page == 0) {
       return (Stack(
@@ -32,8 +33,14 @@ class _WrapperState extends State<Wrapper> {
       return (Stack(
         children: <Widget>[
           MapScreen(snapshot: widget.snapshot),
-          Container(
-            color: Colors.white.withOpacity(0.5),
+          GestureDetector(
+            onTap: () {
+              navBarState =_bottomNavigationKey.currentState;
+              navBarState.setPage(0);
+            },
+            child: Container(
+              color: Colors.white.withOpacity(0.5),
+            ),
           ),
           Container(
               margin: EdgeInsets.all(20),
@@ -59,8 +66,14 @@ class _WrapperState extends State<Wrapper> {
               margin: EdgeInsets.all(20),
               child: Align(
                   alignment: FractionalOffset.topCenter, child: Search())),
-          Container(
-            color: Colors.white.withOpacity(0.5),
+          GestureDetector(
+            onTap: () {
+              navBarState =_bottomNavigationKey.currentState;
+              navBarState.setPage(0);
+            },
+            child: Container(
+              color: Colors.white.withOpacity(0.5),
+            ),
           ),
         ],
       ));
@@ -72,8 +85,14 @@ class _WrapperState extends State<Wrapper> {
               margin: EdgeInsets.all(20),
               child: Align(
                   alignment: FractionalOffset.topCenter, child: Search())),
-          Container(
-            color: Colors.white.withOpacity(0.5),
+          GestureDetector(
+            onTap: () {
+              navBarState =_bottomNavigationKey.currentState;
+              navBarState.setPage(0);
+            },
+            child: Container(
+              color: Colors.white.withOpacity(0.5),
+            ),
           ),
         ],
       ));
@@ -85,8 +104,14 @@ class _WrapperState extends State<Wrapper> {
               margin: EdgeInsets.all(20),
               child: Align(
                   alignment: FractionalOffset.topCenter, child: Search())),
-          Container(
-            color: Colors.white.withOpacity(0.5),
+          GestureDetector(
+            onTap: () {
+              navBarState =_bottomNavigationKey.currentState;
+              navBarState.setPage(0);
+            },
+            child: Container(
+              color: Colors.white.withOpacity(0.5),
+            ),
           ),
         ],
       ));
