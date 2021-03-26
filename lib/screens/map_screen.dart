@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {
   AsyncSnapshot<dynamic> snapshot;
-  MapScreen({@required this.snapshot});
+  MapScreen({@required this.snapshot, Key key}) : super(key: key);
   @override
   State<MapScreen> createState() => MapScreenState();
 }
@@ -95,7 +95,7 @@ class MapScreenState extends State<MapScreen> {
       _clusterTextColor,
       80,
       box,
-      _handleMarkerClick,
+      handleMarkerClick,
     );
     _markers
       ..clear()
@@ -106,7 +106,8 @@ class MapScreenState extends State<MapScreen> {
   }
 
   //callback that handle markers tap anz zoom on tapped marker
-  void _handleMarkerClick(double long, double lat) async {
+  void handleMarkerClick(double long, double lat) async {
+    print(lat);
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(

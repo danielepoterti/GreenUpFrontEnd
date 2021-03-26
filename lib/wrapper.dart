@@ -3,6 +3,8 @@ import 'screens/map_screen.dart';
 import 'screens/searchbar.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
+GlobalKey<MapScreenState> globalKey = GlobalKey();
+
 class Wrapper extends StatefulWidget {
   AsyncSnapshot<dynamic> snapshot;
   Wrapper({@required this.snapshot});
@@ -12,20 +14,73 @@ class Wrapper extends StatefulWidget {
 
 class _WrapperState extends State<Wrapper> {
   int _page = 0;
+  bool autocompleteVisible = false;
+  List<Widget> autocomplete;
   GlobalKey _bottomNavigationKey = GlobalKey();
   CurvedNavigationBarState navBarState;
+
+  void handleAutocompleteClick(element) async {
+    await globalKey.currentState.handleMarkerClick(
+        double.parse(element['coo']['long']),
+        double.parse(element['coo']['lat']));
+    setState(() {
+      autocompleteVisible = false;
+    });
+  }
+
+  List getAutocomplete(List list) {
+    autocompleteVisible = true;
+    List<Widget> appoggio = [];
+    list.forEach((element) {
+      appoggio.add(InkWell(
+          onTap: () => {handleAutocompleteClick(element)},
+          child: Container(
+            height: 50,
+            color: Colors.white,
+            child: Center(child: Text(element['name'])),
+          )));
+    });
+    setState(() {
+      autocomplete = appoggio;
+    });
+  }
+
+  Widget _autocomplete() {
+    print('-------------------');
+    if (autocompleteVisible) {
+      return (Container(
+          width: 300,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          child: ListView(
+            shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+            children: autocomplete,
+          )));
+    } else {
+      return Container();
+    }
+  }
+
   Widget _router() {
     if (_page == 0) {
       return (Stack(
         children: <Widget>[
-          MapScreen(snapshot: widget.snapshot),
+          MapScreen(
+            snapshot: widget.snapshot,
+            key: globalKey,
+          ),
           Container(
-              margin: EdgeInsets.all(20),
+              margin: EdgeInsets.all(0),
               child: Align(
                   alignment: FractionalOffset.topCenter,
                   child: Column(
-                    //starting to create autocomplete
-                    children: [Search()],
+                    children: [
+                      Search(getAutocomplete),
+                      _autocomplete(),
+                      //children: autocomplete,
+                    ],
                   ))),
         ],
       ));
@@ -35,7 +90,7 @@ class _WrapperState extends State<Wrapper> {
           MapScreen(snapshot: widget.snapshot),
           GestureDetector(
             onTap: () {
-              navBarState =_bottomNavigationKey.currentState;
+              navBarState = _bottomNavigationKey.currentState;
               navBarState.setPage(0);
             },
             child: Container(
@@ -45,7 +100,7 @@ class _WrapperState extends State<Wrapper> {
           Container(
               margin: EdgeInsets.all(20),
               child: Align(
-                  alignment: FractionalOffset.topCenter, child: Search())),
+                  alignment: FractionalOffset.topCenter, child: Container())),
           Container(
             alignment: Alignment.center,
             child: Container(
@@ -65,10 +120,10 @@ class _WrapperState extends State<Wrapper> {
           Container(
               margin: EdgeInsets.all(20),
               child: Align(
-                  alignment: FractionalOffset.topCenter, child: Search())),
+                  alignment: FractionalOffset.topCenter, child: Container())),
           GestureDetector(
             onTap: () {
-              navBarState =_bottomNavigationKey.currentState;
+              navBarState = _bottomNavigationKey.currentState;
               navBarState.setPage(0);
             },
             child: Container(
@@ -84,10 +139,10 @@ class _WrapperState extends State<Wrapper> {
           Container(
               margin: EdgeInsets.all(20),
               child: Align(
-                  alignment: FractionalOffset.topCenter, child: Search())),
+                  alignment: FractionalOffset.topCenter, child: Container())),
           GestureDetector(
             onTap: () {
-              navBarState =_bottomNavigationKey.currentState;
+              navBarState = _bottomNavigationKey.currentState;
               navBarState.setPage(0);
             },
             child: Container(
@@ -103,10 +158,10 @@ class _WrapperState extends State<Wrapper> {
           Container(
               margin: EdgeInsets.all(20),
               child: Align(
-                  alignment: FractionalOffset.topCenter, child: Search())),
+                  alignment: FractionalOffset.topCenter, child: Container())),
           GestureDetector(
             onTap: () {
-              navBarState =_bottomNavigationKey.currentState;
+              navBarState = _bottomNavigationKey.currentState;
               navBarState.setPage(0);
             },
             child: Container(
