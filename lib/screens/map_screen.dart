@@ -192,6 +192,7 @@ class MapScreenState extends State<MapScreen> {
         onCameraIdle: () => _updateMarkers(),
         myLocationEnabled: true,
         myLocationButtonEnabled: false,
+        mapToolbarEnabled: false,
         compassEnabled: false,
         buildingsEnabled: false,
       ),
