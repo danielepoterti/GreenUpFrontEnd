@@ -17,8 +17,7 @@ class GeolocatorService {
         //Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
         //Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
         return await Geolocator.getCurrentPosition(
-          forceAndroidLocationManager: true,
-          desiredAccuracy: LocationAccuracy.low,
+          desiredAccuracy: LocationAccuracy.high,
         );
       } else
         return null;
