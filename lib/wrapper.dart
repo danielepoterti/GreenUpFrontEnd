@@ -65,14 +65,15 @@ class _WrapperState extends State<Wrapper> {
 
   Widget _router() {
     if (_page == 0) {
-      return (Stack(
+      return (
+        Stack(
         children: <Widget>[
           MapScreen(
             snapshot: widget.snapshot,
             key: globalKey,
           ),
           Container(
-              margin: EdgeInsets.all(0),
+              margin: EdgeInsets.all(20),
               child: Align(
                   alignment: FractionalOffset.topCenter,
                   child: Column(
