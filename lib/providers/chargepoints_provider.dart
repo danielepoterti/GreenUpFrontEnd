@@ -62,7 +62,6 @@ class ChargePoints with ChangeNotifier {
   }
 
   initChargers(BuildContext context) async {
-    print('initChargers------------------------------');
     final url = Uri.https(
       'michelebanfi.github.io',
       'data/data.json',
@@ -73,8 +72,7 @@ class ChargePoints with ChangeNotifier {
     // Map positionMap = jsonDecode(json);
 
     try {
-
-    final response = await http.get(url);
+      final response = await http.get(url);
 
       final positionMap = json.decode(response.body) as Map<String, dynamic>;
 
@@ -97,10 +95,6 @@ class ChargePoints with ChangeNotifier {
         );
       });
       _chargePoints = loadedChargers;
-
-      print('Chargers loaded');
-
-      print('initChargers------------------------------');
 
       notifyListeners();
     } catch (e) {}

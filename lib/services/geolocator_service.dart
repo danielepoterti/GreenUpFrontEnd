@@ -13,8 +13,12 @@ class GeolocatorService {
       //print(Permission.locationAlways.request());
       if (result == PermissionStatus.granted) {
         //va gestita anche la parte iOS
+
+        //Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
+        //Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
         return await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
+          forceAndroidLocationManager: true,
+          desiredAccuracy: LocationAccuracy.low,
         );
       } else
         return null;

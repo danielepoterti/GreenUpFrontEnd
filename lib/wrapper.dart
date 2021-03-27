@@ -32,11 +32,17 @@ class _WrapperState extends State<Wrapper> {
     autocompleteVisible = true;
     List<Widget> appoggio = [];
     list.forEach((element) {
+      appoggio.add(SizedBox(
+        height: 7,
+      ));
       appoggio.add(InkWell(
           onTap: () => {handleAutocompleteClick(element)},
           child: Container(
-            height: 50,
-            color: Colors.white,
+            height: 40,
+            width: 500,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(4))),
             child: Center(child: Text(element['name'])),
           )));
     });
@@ -50,23 +56,24 @@ class _WrapperState extends State<Wrapper> {
     if (autocompleteVisible) {
       return (Container(
           width: 300,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(20))),
-          child: ListView(
-            shrinkWrap: true,
-            physics: ClampingScrollPhysics(),
-            children: autocomplete,
-          )));
+          child: MediaQuery.removePadding(
+              removeBottom: true,
+              context: context,
+              child: ListView(
+                padding: EdgeInsets.all(0),
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                children: autocomplete,
+              ))));
     } else {
       return Container();
     }
   }
 
   Widget _router() {
+    print('called router');
     if (_page == 0) {
-      return (
-        Stack(
+      return (Stack(
         children: <Widget>[
           MapScreen(
             snapshot: widget.snapshot,
