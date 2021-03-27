@@ -1,24 +1,36 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+//mport 'package:permission_handler/permission_handler.dart';
+import 'package:location/location.dart';
 
 class GeolocatorService {
   static Future<PermissionStatus> getPermission() async {
-    //print('-----');
-    //print(await Permission.locationAlways.request());
-    return await Permission.location.request();
+    // bool _serviceEnabled;
+    // PermissionStatus _permissionGranted;
+    // LocationData _locationData;
+
+    // _serviceEnabled = await location.serviceEnabled();
+    // if (!_serviceEnabled) {
+    //   _serviceEnabled = await location.requestService();
+    //   if (!_serviceEnabled) {
+    //     return;
+    //   }
+    // }
+
+    // _permissionGranted = await location.hasPermission();
+    // if (_permissionGranted == PermissionStatus.denied) {
+    //   _permissionGranted = await location.requestPermission();
+    //   if (_permissionGranted != PermissionStatus.granted) {
+    //     return;
+    //   }
+    // }
+    Location location = new Location();
+    return await location.hasPermission();
   }
 
   static Future<Position> getLocation() async {
     return getPermission().then((result) async {
-      //print(Permission.locationAlways.request());
       if (result == PermissionStatus.granted) {
-        //va gestita anche la parte iOS
-
-        //Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
-        //Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
-        return await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-        );
+        return await Geolocator.getCurrentPosition();
       } else
         return null;
     });
