@@ -6,14 +6,14 @@ import 'package:http/http.dart' as http;
 class Search extends StatefulWidget {
   String query = '';
   Function callback;
-  Search(Function this.callback) {}
+  Search(this.callback);
   @override
   _SearchState createState() => _SearchState(callback);
 }
 
 class _SearchState extends State<Search> {
   Function callback;
-  _SearchState(this.callback) {}
+  _SearchState(this.callback);
   TextEditingController textController = TextEditingController();
   @override
   void initState() {

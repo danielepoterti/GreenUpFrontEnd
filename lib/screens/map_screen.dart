@@ -41,10 +41,10 @@ class MapScreenState extends State<MapScreen> {
   double _currentZoom = 15;
 
   /// Map loading flag
-  bool _isMapLoading = true;
+  //bool _isMapLoading = true;
 
   /// Markers loading flag
-  bool _areMarkersLoading = true;
+  //bool _areMarkersLoading = true;
 
   /// Color of the cluster circle
   final Color _clusterColor = Colors.blue;
@@ -86,7 +86,7 @@ class MapScreenState extends State<MapScreen> {
       _currentZoom = currentZoomLevel;
     }
     setState(() {
-      _areMarkersLoading = true;
+    //  _areMarkersLoading = true;
     });
     final updatedMarkers = await MapHelper.getClusterMarkers(
       _clusterManager,
@@ -101,7 +101,7 @@ class MapScreenState extends State<MapScreen> {
       ..clear()
       ..addAll(updatedMarkers);
     setState(() {
-      _areMarkersLoading = false;
+    //  _areMarkersLoading = false;
     });
   }
 
@@ -186,7 +186,7 @@ class MapScreenState extends State<MapScreen> {
             throw e;
           }
           setState(() {
-            _isMapLoading = false;
+          //  _isMapLoading = false;
           });
         },
         onCameraMove: (position) => _updateZoomLevel(position.zoom),
