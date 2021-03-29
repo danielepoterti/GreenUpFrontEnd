@@ -165,7 +165,9 @@ class MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     var snapshot = widget.snapshot;
     return new Scaffold(
+      resizeToAvoidBottomInset: false,
       body: GoogleMap(
+        padding: EdgeInsets.only(bottom: 85),
         initialCameraPosition: snapshot.hasData == false
             ? _kRoma
             : CameraPosition(
