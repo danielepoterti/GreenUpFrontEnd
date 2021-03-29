@@ -177,20 +177,22 @@ class MapScreenState extends State<MapScreen> {
   }
 
   void handleMarkerClickMarker(double long, double lat) async {
-    print('MARKER PRESSED');
-    setState(() {
-      isChargePointPressed = true;
-    });
+    
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(
+   await controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           bearing: 0,
           target: LatLng(lat, long),
           zoom: 17.0,
         ),
+        
       ),
-    );
+    ).then((value) => setState(() {
+      isChargePointPressed = true;
+    }));
+    print('MARKER PRESSED');
+    
   }
 
   //zoom on user current position
@@ -262,6 +264,12 @@ class MapScreenState extends State<MapScreen> {
                   ),
             markers: Set<Marker>.of(_markers),
             zoomControlsEnabled: false,
+            onCameraMoveStarted: ()  {
+              if (isChargePointPressed)
+              setState(() {
+              isChargePointPressed = false;
+            });
+            },
             onMapCreated: (GoogleMapController controller) {
               _setMapstyle(controller);
               conti = controller;
@@ -313,7 +321,7 @@ class MapScreenState extends State<MapScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 200),
+                                padding: const EdgeInsets.only(bottom: 180),
                                 child: Card(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(
@@ -324,13 +332,16 @@ class MapScreenState extends State<MapScreen> {
                                   child: SizedBox(
                                     child: InkWell(
                                       onTap: () {
-                                        setState(() {
-                                          isChargePointPressed = false;
-                                        });
+                                        // setState(() {
+                                        //   isChargePointPressed = false;
+                                        // });
                                       },
                                     ),
                                     width: 300,
-                                    height: 200,
+                                    height: 100 +
+                                        MediaQuery.of(context).size.height /
+                                            100 *
+                                            8,
                                   ),
                                 ),
                               ),
