@@ -32,6 +32,7 @@ dependencies:
   curved_navigation_bar: ^0.3.7
   anim_search_bar: ^2.0.1
   location: ^4.1.1
+  credit_card: 0.1.6
 
 
   # The following adds the Cupertino Icons font to your application.

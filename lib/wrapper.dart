@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'screens/map_screen.dart';
-import 'screens/searchbar.dart';
+import 'screens/schedule.dart';
+import 'screens/profile.dart';
+import 'screens/prenotazioni.dart';
+import 'screens/card.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 GlobalKey<MapScreenState> globalKey = GlobalKey();
@@ -52,7 +55,6 @@ class _WrapperState extends State<Wrapper> {
   }
 
   Widget _autocomplete() {
-    print('-------------------');
     if (autocompleteVisible) {
       return (Container(
           width: 300,
@@ -71,7 +73,6 @@ class _WrapperState extends State<Wrapper> {
   }
 
   Widget _router() {
-    print('called router');
     if (_page == 0) {
       return (Stack(
         children: <Widget>[
@@ -93,20 +94,7 @@ class _WrapperState extends State<Wrapper> {
               color: Colors.white.withOpacity(0.5),
             ),
           ),
-          Container(
-              margin: EdgeInsets.all(20),
-              child: Align(
-                  alignment: FractionalOffset.topCenter, child: Container())),
-          Container(
-            alignment: Alignment.center,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              width: 200,
-              height: 200,
-            ),
-          ),
+          Schedule(),
         ],
       ));
     } else if (_page == 2) {
@@ -126,6 +114,7 @@ class _WrapperState extends State<Wrapper> {
               color: Colors.white.withOpacity(0.5),
             ),
           ),
+          Prenotazioni(),
         ],
       ));
     } else if (_page == 3) {
@@ -145,6 +134,7 @@ class _WrapperState extends State<Wrapper> {
               color: Colors.white.withOpacity(0.5),
             ),
           ),
+          CreditCard(),
         ],
       ));
     } else if (_page == 4) {
@@ -164,6 +154,7 @@ class _WrapperState extends State<Wrapper> {
               color: Colors.white.withOpacity(0.5),
             ),
           ),
+          Profile(),
         ],
       ));
     }
@@ -196,7 +187,6 @@ class _WrapperState extends State<Wrapper> {
           animationCurve: Curves.easeInOut,
           animationDuration: Duration(milliseconds: 600),
           onTap: (index) {
-            print(index);
             setState(() {
               _page = index;
             });
