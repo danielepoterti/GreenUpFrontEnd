@@ -110,6 +110,7 @@ class ChargePoints with ChangeNotifier {
     _chargePoints.forEach((element) {
       chargeMarkers.add(
         MapMarker(
+          
           id: element.id,
           position: element.position,
           icon: element.status == Status.available

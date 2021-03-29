@@ -27,6 +27,7 @@ class MapScreenState extends State<MapScreen> {
   List<double> box = [0, 0, 0, 0];
 
   bool isInit = true;
+  bool isChargePointPressed = false;
 
   /// Set of displayed markers and cluster markers on the map
   final Set<Marker> _markers = Set();
@@ -97,7 +98,8 @@ class MapScreenState extends State<MapScreen> {
       _clusterTextColor,
       80,
       box,
-      handleMarkerClick,
+      handleMarkerClickCluster,
+      handleMarkerClickMarker,
     );
     _markers
       ..clear()
@@ -107,8 +109,8 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
-  void handleAutocompleteClick(element) async {
-    await handleMarkerClick(double.parse(element['coo']['long']),
+  void handleAutocompleteClick(element) {
+    handleMarkerClickCluster(double.parse(element['coo']['long']),
         double.parse(element['coo']['lat']));
     setState(() {
       autocompleteVisible = false;
@@ -157,15 +159,38 @@ class MapScreenState extends State<MapScreen> {
   }
 
   //callback that handle markers tap anz zoom on tapped marker
-  void handleMarkerClick(double long, double lat) async {
+  void handleMarkerClickCluster(double long, double lat) async {
+    // print('MARKER PRESSED');
+    // setState(() {
+    //   isChargePointPressed = true;
+    // });
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(
-        bearing: 0,
-        target: LatLng(lat, long),
-        zoom: 13.0,
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 0,
+          target: LatLng(lat, long),
+          zoom: 13.0,
+        ),
       ),
-    ));
+    );
+  }
+
+  void handleMarkerClickMarker(double long, double lat) async {
+    print('MARKER PRESSED');
+    setState(() {
+      isChargePointPressed = true;
+    });
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 0,
+          target: LatLng(lat, long),
+          zoom: 17.0,
+        ),
+      ),
+    );
   }
 
   //zoom on user current position
@@ -272,16 +297,52 @@ class MapScreenState extends State<MapScreen> {
               : null,
         ),
         Container(
-            margin: EdgeInsets.all(20),
-            child: Align(
-                alignment: FractionalOffset.topCenter,
-                child: Column(
-                  children: [
-                    Search(getAutocomplete, handlePrefix),
-                    _autocomplete(),
-                    //children: autocomplete,
-                  ],
-                ))),
+          margin: EdgeInsets.all(20),
+          child: Align(
+            alignment: FractionalOffset.topCenter,
+            child: Column(
+              children: [
+                Search(getAutocomplete, handlePrefix),
+                _autocomplete(),
+                //children: autocomplete,
+                isChargePointPressed
+                    ? Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 200),
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(13),
+                                    ),
+                                  ),
+                                  elevation: 5,
+                                  child: SizedBox(
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          isChargePointPressed = false;
+                                        });
+                                      },
+                                    ),
+                                    width: 300,
+                                    height: 200,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

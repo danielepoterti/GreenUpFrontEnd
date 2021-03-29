@@ -20,7 +20,7 @@ class _WrapperState extends State<Wrapper> {
   CurvedNavigationBarState navBarState;
 
   void handleAutocompleteClick(element) async {
-    await globalKey.currentState.handleMarkerClick(
+    await globalKey.currentState.handleMarkerClickCluster(
         double.parse(element['coo']['long']),
         double.parse(element['coo']['lat']));
     setState(() {

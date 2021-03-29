@@ -161,7 +161,8 @@ class MapHelper {
       Color clusterTextColor,
       int clusterWidth,
       List<double> bbox,
-      Function _handleMarkerClick) {
+      Function _handleMarkerClickCluster,
+      Function _handleMarkerClickMarker,) {
     assert(currentZoom != null);
     assert(clusterColor != null);
     assert(clusterTextColor != null);
@@ -172,13 +173,15 @@ class MapHelper {
         .clusters(bbox, currentZoom.toInt())
         .map((mapMarker) async {
       if (mapMarker.isCluster) {
-        mapMarker.handleMarkerClick = _handleMarkerClick;
+        mapMarker.handleMarkerClick = _handleMarkerClickCluster;
         mapMarker.icon = await _getClusterMarker(
           mapMarker.pointsSize,
           clusterColor,
           clusterTextColor,
           clusterWidth,
         );
+      }else {
+        mapMarker.handleMarkerClick = _handleMarkerClickMarker;
       }
       return mapMarker.toMarker();
     }).toList());
