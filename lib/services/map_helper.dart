@@ -129,7 +129,6 @@ class MapHelper {
     assert(markers != null);
     assert(minZoom != null);
     assert(maxZoom != null);
-
     return Fluster<MapMarker>(
       minZoom: minZoom,
       maxZoom: maxZoom,
@@ -167,7 +166,6 @@ class MapHelper {
     assert(clusterColor != null);
     assert(clusterTextColor != null);
     assert(clusterWidth != null);
-
     if (clusterManager == null) return Future.value([]);
 
     return Future.wait(clusterManager
@@ -182,7 +180,6 @@ class MapHelper {
           clusterWidth,
         );
       }
-
       return mapMarker.toMarker();
     }).toList());
   }

@@ -64,7 +64,7 @@ class ChargePoints with ChangeNotifier {
   initChargers(BuildContext context) async {
     final url = Uri.https(
       'michelebanfi.github.io',
-      'data/data.json',
+      'data/data.geojson',
     );
 
     // final json =
@@ -73,31 +73,29 @@ class ChargePoints with ChangeNotifier {
 
     try {
       final response = await http.get(url);
-
-      final positionMap = json.decode(response.body) as Map<String, dynamic>;
-
-      //print(positionMap);
-
+      final positionMap = json.decode(response.body);
       final List<ChargePoint> loadedChargers = [];
 
-      positionMap['data'].forEach((element) {
+      positionMap['features'].forEach((element) {
         return loadedChargers.add(
           ChargePoint(
-            id: element['id'].toString(),
+            id: element['properties']['id'].toString(),
             address: null,
             status: Status.available,
             plug: null,
             maxPower: null,
             powerType: null,
             cost: null,
-            position: LatLng(element['lat'], element['long']),
+            position: LatLng(element['geometry']['coordinates'][0][1],
+                element['geometry']['coordinates'][0][0]),
           ),
         );
       });
       _chargePoints = loadedChargers;
-
       notifyListeners();
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   initIcons() async {

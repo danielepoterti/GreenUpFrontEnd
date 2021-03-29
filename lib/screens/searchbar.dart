@@ -6,14 +6,16 @@ import 'package:http/http.dart' as http;
 class Search extends StatefulWidget {
   String query = '';
   Function callback;
-  Search(this.callback);
+  Function prefixTap;
+  Search(this.callback, this.prefixTap);
   @override
-  _SearchState createState() => _SearchState(callback);
+  _SearchState createState() => _SearchState(callback, prefixTap);
 }
 
 class _SearchState extends State<Search> {
   Function callback;
-  _SearchState(this.callback);
+  Function prefixTap;
+  _SearchState(this.callback, this.prefixTap);
   TextEditingController textController = TextEditingController();
   @override
   void initState() {
@@ -23,14 +25,16 @@ class _SearchState extends State<Search> {
 
   // callback fired every time input change
   void handleTextChanges() async {
-    final url = Uri.https(
-      'michelebanfi.github.io',
-      'data/place.json',
-    );
-    final response = await http.get(url);
-    Map<String, dynamic> map = json.decode(response.body);
-    List<dynamic> data = map["data"];
-    this.callback(data);
+    if (textController.text.length > 2) {
+      final url = Uri.https(
+        'michelebanfi.github.io',
+        'data/place.json',
+      );
+      final response = await http.get(url);
+      Map<String, dynamic> map = json.decode(response.body);
+      List<dynamic> data = map["data"];
+      this.callback(data);
+    }
   }
 
   @override
@@ -41,6 +45,13 @@ class _SearchState extends State<Search> {
           width: 400,
           textController: textController,
           suffixIcon: Icon(Icons.search),
+          autoFocus: true,
+          onPrefixTap: () => {
+            setState(() {
+              textController.clear();
+            }),
+            this.prefixTap()
+          },
           onSuffixTap: () {
             setState(() {
               textController.clear();

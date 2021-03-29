@@ -77,19 +77,7 @@ class _WrapperState extends State<Wrapper> {
         children: <Widget>[
           MapScreen(
             snapshot: widget.snapshot,
-            key: globalKey,
           ),
-          Container(
-              margin: EdgeInsets.all(20),
-              child: Align(
-                  alignment: FractionalOffset.topCenter,
-                  child: Column(
-                    children: [
-                      Search(getAutocomplete),
-                      _autocomplete(),
-                      //children: autocomplete,
-                    ],
-                  ))),
         ],
       ));
     } else if (_page == 1) {

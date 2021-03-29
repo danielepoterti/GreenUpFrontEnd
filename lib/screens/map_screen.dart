@@ -7,10 +7,11 @@ import 'package:green_up/services/geolocator_service.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'package:green_up/services/map_marker.dart';
 import 'package:provider/provider.dart';
+import 'searchbar.dart';
 
 class MapScreen extends StatefulWidget {
   AsyncSnapshot<dynamic> snapshot;
-  MapScreen({@required this.snapshot, Key key}) : super(key: key);
+  MapScreen({@required this.snapshot});
   @override
   State<MapScreen> createState() => MapScreenState();
 }
@@ -20,6 +21,8 @@ class MapScreenState extends State<MapScreen> {
   double previousZoom = 0;
   double currentZoomLevel = 0;
   GoogleMapController conti;
+  bool autocompleteVisible = false;
+  List<Widget> autocomplete;
 
   List<double> box = [0, 0, 0, 0];
 
@@ -61,7 +64,6 @@ class MapScreenState extends State<MapScreen> {
       _minClusterZoom,
       _maxClusterZoom,
     );
-
     await _updateMarkers();
   }
 
@@ -86,7 +88,7 @@ class MapScreenState extends State<MapScreen> {
       _currentZoom = currentZoomLevel;
     }
     setState(() {
-    //  _areMarkersLoading = true;
+      //  _areMarkersLoading = true;
     });
     final updatedMarkers = await MapHelper.getClusterMarkers(
       _clusterManager,
@@ -101,19 +103,67 @@ class MapScreenState extends State<MapScreen> {
       ..clear()
       ..addAll(updatedMarkers);
     setState(() {
-    //  _areMarkersLoading = false;
+      //  _areMarkersLoading = false;
     });
+  }
+
+  void handleAutocompleteClick(element) async {
+    await handleMarkerClick(double.parse(element['coo']['long']),
+        double.parse(element['coo']['lat']));
+    setState(() {
+      autocompleteVisible = false;
+    });
+  }
+
+  List getAutocomplete(List list) {
+    List<Widget> appoggio = [];
+    list.forEach((element) {
+      appoggio.add(SizedBox(
+        height: 7,
+      ));
+      appoggio.add(InkWell(
+          onTap: () => {handleAutocompleteClick(element)},
+          child: Container(
+            height: 40,
+            width: 500,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+            child: Center(child: Text(element['name'])),
+          )));
+    });
+    setState(() {
+      autocompleteVisible = true;
+      autocomplete = appoggio;
+    });
+  }
+
+  Widget _autocomplete() {
+    if (autocompleteVisible) {
+      return (Container(
+          width: 300,
+          child: MediaQuery.removePadding(
+              removeBottom: true,
+              context: context,
+              child: ListView(
+                padding: EdgeInsets.all(0),
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                children: autocomplete,
+              ))));
+    } else {
+      return Container();
+    }
   }
 
   //callback that handle markers tap anz zoom on tapped marker
   void handleMarkerClick(double long, double lat) async {
-    print(lat);
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         bearing: 0,
         target: LatLng(lat, long),
-        zoom: 10.0,
+        zoom: 13.0,
       ),
     ));
   }
@@ -129,6 +179,12 @@ class MapScreenState extends State<MapScreen> {
         zoom: 17.0,
       ),
     ));
+  }
+
+  void handlePrefix() {
+    setState(() {
+      autocompleteVisible = false;
+    });
   }
 
   final GeolocatorService geo = GeolocatorService();
@@ -164,54 +220,69 @@ class MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     var snapshot = widget.snapshot;
-    return new Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: GoogleMap(
-        padding: EdgeInsets.only(bottom: 85),
-        initialCameraPosition: snapshot.hasData == false
-            ? _kRoma
-            : CameraPosition(
-                target: LatLng(
-                  snapshot.data.latitude,
-                  snapshot.data.longitude,
-                ),
-                zoom: _currentZoom,
-              ),
-        markers: Set<Marker>.of(_markers),
-        zoomControlsEnabled: false,
-        onMapCreated: (GoogleMapController controller) {
-          _setMapstyle(controller);
-          conti = controller;
-          try {
-            _controller.complete(controller);
-          } catch (e) {
-            throw e;
-          }
-          setState(() {
-          //  _isMapLoading = false;
-          });
-        },
-        onCameraMove: (position) => _updateZoomLevel(position.zoom),
-        onCameraIdle: () => _updateMarkers(),
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
-        mapToolbarEnabled: false,
-        compassEnabled: false,
-        buildingsEnabled: false,
-      ),
-      floatingActionButton: snapshot.hasData == true
-          ? Padding(
-              padding: const EdgeInsets.only(bottom: 90.0),
-              child: FloatingActionButton(
-                backgroundColor: Colors.white,
-                onPressed: _currentLocation,
-                child: Icon(
-                  Icons.location_searching_sharp,
-                  color: Colors.black,
-                ),
-              ),
-            )
-          : null,
+    return Stack(
+      children: [
+        Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: GoogleMap(
+            padding: EdgeInsets.only(bottom: 85),
+            initialCameraPosition: snapshot.hasData == false
+                ? _kRoma
+                : CameraPosition(
+                    target: LatLng(
+                      snapshot.data.latitude,
+                      snapshot.data.longitude,
+                    ),
+                    zoom: _currentZoom,
+                  ),
+            markers: Set<Marker>.of(_markers),
+            zoomControlsEnabled: false,
+            onMapCreated: (GoogleMapController controller) {
+              _setMapstyle(controller);
+              conti = controller;
+              try {
+                _controller.complete(controller);
+              } catch (e) {
+                throw e;
+              }
+              setState(() {
+                //  _isMapLoading = false;
+              });
+            },
+            onCameraMove: (position) => _updateZoomLevel(position.zoom),
+            onCameraIdle: () => _updateMarkers(),
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            mapToolbarEnabled: false,
+            compassEnabled: false,
+            buildingsEnabled: false,
+          ),
+          floatingActionButton: snapshot.hasData == true
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 90.0),
+                  child: FloatingActionButton(
+                    backgroundColor: Colors.white,
+                    onPressed: _currentLocation,
+                    child: Icon(
+                      Icons.location_searching_sharp,
+                      color: Colors.black,
+                    ),
+                  ),
+                )
+              : null,
+        ),
+        Container(
+            margin: EdgeInsets.all(20),
+            child: Align(
+                alignment: FractionalOffset.topCenter,
+                child: Column(
+                  children: [
+                    Search(getAutocomplete, handlePrefix),
+                    _autocomplete(),
+                    //children: autocomplete,
+                  ],
+                ))),
+      ],
     );
   }
 }
