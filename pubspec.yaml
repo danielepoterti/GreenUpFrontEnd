@@ -33,7 +33,10 @@ dependencies:
   anim_search_bar: ^2.0.1
   location: ^4.1.1
   credit_card: 0.1.6
-
+  firebase_core: "^1.0.2"
+  firebase_auth: "^1.0.1"
+  flutter_secure_storage: ^4.1.0
+  google_sign_in: "^4.5.1"
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

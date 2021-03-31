@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'screens/map_screen.dart';
 import 'screens/schedule_screen.dart';
 import 'screens/profile_screen.dart';
@@ -9,7 +10,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 GlobalKey<MapScreenState> globalKey = GlobalKey();
 
 class Wrapper extends StatefulWidget {
-  AsyncSnapshot<dynamic> snapshot;
+  Position snapshot;
   Wrapper({@required this.snapshot});
   @override
   _WrapperState createState() => _WrapperState();

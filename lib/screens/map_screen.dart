@@ -10,8 +10,8 @@ import 'package:provider/provider.dart';
 import 'searchbar.dart';
 
 class MapScreen extends StatefulWidget {
-  AsyncSnapshot<dynamic> snapshot;
-  MapScreen({@required this.snapshot});
+  dynamic snapshot;
+  MapScreen({@required this.snapshot}) {}
   @override
   State<MapScreen> createState() => MapScreenState();
 }
@@ -205,8 +205,7 @@ class MapScreenState extends State<MapScreen>
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         bearing: 0,
-        target: LatLng(
-            widget.snapshot.data.latitude, widget.snapshot.data.longitude),
+        target: LatLng(widget.snapshot.latitude, widget.snapshot.longitude),
         zoom: 17.0,
       ),
     ));
@@ -282,12 +281,12 @@ class MapScreenState extends State<MapScreen>
           resizeToAvoidBottomInset: false,
           body: GoogleMap(
             padding: EdgeInsets.only(bottom: 85),
-            initialCameraPosition: snapshot.hasData == false
+            initialCameraPosition: snapshot == null
                 ? _kRoma
                 : CameraPosition(
                     target: LatLng(
-                      snapshot.data.latitude,
-                      snapshot.data.longitude,
+                      snapshot.latitude,
+                      snapshot.longitude,
                     ),
                     zoom: _currentZoom,
                   ),
@@ -320,7 +319,7 @@ class MapScreenState extends State<MapScreen>
             compassEnabled: false,
             buildingsEnabled: false,
           ),
-          floatingActionButton: snapshot.hasData == true
+          floatingActionButton: snapshot != null
               ? Padding(
                   padding: const EdgeInsets.only(bottom: 90.0),
                   child: FloatingActionButton(
