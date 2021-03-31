@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'screens/map_screen.dart';
-import 'screens/schedule.dart';
-import 'screens/profile.dart';
-import 'screens/prenotazioni.dart';
-import 'screens/card.dart';
+import 'screens/schedule_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/books_screen.dart';
+import 'screens/card_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 GlobalKey<MapScreenState> globalKey = GlobalKey();

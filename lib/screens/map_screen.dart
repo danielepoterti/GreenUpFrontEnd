@@ -16,7 +16,11 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => MapScreenState();
 }
 
-class MapScreenState extends State<MapScreen> {
+class MapScreenState extends State<MapScreen>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controllerChargePointCard;
+  Animation<Offset> _offsetAnimation;
+
   //TODO: fix duplicated variables
   double previousZoom = 0;
   double currentZoomLevel = 0;
@@ -177,22 +181,22 @@ class MapScreenState extends State<MapScreen> {
   }
 
   void handleMarkerClickMarker(double long, double lat) async {
-    
     final GoogleMapController controller = await _controller.future;
-   await controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          bearing: 0,
-          target: LatLng(lat, long),
-          zoom: 17.0,
-        ),
-        
-      ),
-    ).then((value) => setState(() {
-      isChargePointPressed = true;
-    }));
+    await controller
+        .animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              bearing: 0,
+              target: LatLng(lat, long),
+              zoom: 17.0,
+            ),
+          ),
+        )
+        .then((value) => setState(() {
+              isChargePointPressed = true;
+            }));
+    _controllerChargePointCard.forward();
     print('MARKER PRESSED');
-    
   }
 
   //zoom on user current position
@@ -228,6 +232,24 @@ class MapScreenState extends State<MapScreen> {
     controller.setMapStyle(_style);
   }
 
+  @override
+  void initState() {
+    _controllerChargePointCard = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    _offsetAnimation = Tween<Offset>(
+      begin: const Offset(1.5, 0.0),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controllerChargePointCard,
+        curve: Curves.elasticInOut,
+      ),
+    );
+    super.initState();
+  }
+
   ChargePoints data;
   @override
   Future<void> didChangeDependencies() async {
@@ -237,11 +259,18 @@ class MapScreenState extends State<MapScreen> {
           .loadString('./assets/map_style.json');
       await data.initIcons();
       await data.initChargers(context).then((_) => _initMarkers());
+
       setState(() {
         isInit = !isInit;
       });
     }
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controllerChargePointCard.dispose();
   }
 
   @override
@@ -264,11 +293,12 @@ class MapScreenState extends State<MapScreen> {
                   ),
             markers: Set<Marker>.of(_markers),
             zoomControlsEnabled: false,
-            onCameraMoveStarted: ()  {
+            onCameraMoveStarted: () {
               if (isChargePointPressed)
-              setState(() {
-              isChargePointPressed = false;
-            });
+                setState(() {
+                  isChargePointPressed = false;
+                });
+              _controllerChargePointCard.reverse();
             },
             onMapCreated: (GoogleMapController controller) {
               _setMapstyle(controller);
@@ -313,43 +343,44 @@ class MapScreenState extends State<MapScreen> {
                 Search(getAutocomplete, handlePrefix),
                 _autocomplete(),
                 //children: autocomplete,
-                isChargePointPressed
-                    ? Expanded(
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 180),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(13),
-                                    ),
-                                  ),
-                                  elevation: 5,
-                                  child: SizedBox(
-                                    child: InkWell(
-                                      onTap: () {
-                                        // setState(() {
-                                        //   isChargePointPressed = false;
-                                        // });
-                                      },
-                                    ),
-                                    width: 300,
-                                    height: 100 +
-                                        MediaQuery.of(context).size.height /
-                                            100 *
-                                            8,
-                                  ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SlideTransition(
+                          position: _offsetAnimation,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 180),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(13),
                                 ),
                               ),
-                            ],
+                              elevation: 5,
+                              child: SizedBox(
+                                child: InkWell(
+                                  onTap: () {
+                                    // setState(() {
+                                    //   isChargePointPressed = false;
+                                    // });
+                                  },
+                                ),
+                                width: 300,
+                                height: 100 +
+                                    MediaQuery.of(context).size.height /
+                                        100 *
+                                        8,
+                              ),
+                            ),
                           ),
                         ),
-                      )
-                    : SizedBox.shrink(),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
