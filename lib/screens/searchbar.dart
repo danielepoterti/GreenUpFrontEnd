@@ -4,10 +4,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Search extends StatefulWidget {
+  double width;
   String query = '';
   Function callback;
   Function prefixTap;
-  Search(this.callback, this.prefixTap);
+  Search({this.callback, this.prefixTap, this.width});
   @override
   _SearchState createState() => _SearchState(callback, prefixTap);
 }
@@ -42,7 +43,7 @@ class _SearchState extends State<Search> {
     return Container(
         margin: EdgeInsets.only(top: 30),
         child: AnimSearchBar(
-          width: 400,
+          width: widget.width,
           textController: textController,
           suffixIcon: Icon(Icons.search),
           autoFocus: true,

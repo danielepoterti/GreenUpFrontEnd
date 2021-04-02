@@ -7,6 +7,7 @@ import 'package:green_up/services/geolocator_service.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'package:green_up/services/map_marker.dart';
 import 'package:provider/provider.dart';
+import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'searchbar.dart';
 
 class MapScreen extends StatefulWidget {
@@ -333,58 +334,112 @@ class MapScreenState extends State<MapScreen>
                 )
               : null,
         ),
-        Container(
-          margin: EdgeInsets.all(20),
-          child: Align(
-            alignment: FractionalOffset.topCenter,
-            child: Column(
+        Column(
+          children: [
+            Row(
               children: [
-                Search(getAutocomplete, handlePrefix),
-                _autocomplete(),
-                //children: autocomplete,
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SlideTransition(
-                          position: _offsetAnimation,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 180),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(13),
-                                ),
-                              ),
-                              elevation: 5,
-                              child: SizedBox(
-                                child: InkWell(
-                                  onTap: () {
-                                    // setState(() {
-                                    //   isChargePointPressed = false;
-                                    // });
-                                  },
-                                ),
-                                width: 300,
-                                height: 100 +
-                                    MediaQuery.of(context).size.height /
-                                        100 *
-                                        8,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                Container(
+                  margin: EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Search(
+                        callback: getAutocomplete,
+                        prefixTap: handlePrefix,
+                        width: MediaQuery.of(context).size.width - 40,
+                      ),
+                    ],
                   ),
-                ),
+                )
               ],
             ),
-          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _autocomplete(),
+              ],
+            ),
+
+            //children: autocomplete,
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 180),
+                    child: Container(
+                      child: Row(
+                        
+                        children: [
+                          SlideTransition(
+                              position: _offsetAnimation,
+                              child:
+                                  SizedBox(
+                                    height: 200,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ScrollSnapList(
+                                      initialIndex: 0,
+                                      itemCount: 10,
+                                        itemBuilder: itemBuilder,
+                                        itemSize: 310,
+                                        onItemFocus: (index) => print(index)),
+                                  ),
+                              //     Card(
+                              //   shape: RoundedRectangleBorder(
+                              //     borderRadius: BorderRadius.all(
+                              //       Radius.circular(13),
+                              //     ),
+                              //   ),
+                              //   elevation: 5,
+                              //   child: SizedBox(
+                              //     child: InkWell(
+                              //       onTap: () {
+                              //         // setState(() {
+                              //         //   isChargePointPressed = false;
+                              //         // });
+                              //       },
+                              //     ),
+                              //     width: 300,
+                              //     height: 100 +
+                              //         MediaQuery.of(context).size.height /
+                              //             100 *
+                              //             8,
+                              //   ),
+                              // ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget itemBuilder(BuildContext context, int index) {
+    //horizontal
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(13),
+        ),
+      ),
+      elevation: 5,
+      child: SizedBox(
+        child: InkWell(
+          onTap: () {
+            // setState(() {
+            //   isChargePointPressed = false;
+            // });
+          },
+        ),
+        width: 300,
+        height: 100 ,
+      ),
     );
   }
 }
