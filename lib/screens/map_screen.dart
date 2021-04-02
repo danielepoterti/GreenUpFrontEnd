@@ -239,7 +239,7 @@ class MapScreenState extends State<MapScreen>
       vsync: this,
     );
     _offsetAnimation = Tween<Offset>(
-      begin: const Offset(1.5, 0.0),
+      begin: const Offset(0.0, 2),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
@@ -420,7 +420,7 @@ class MapScreenState extends State<MapScreen>
   }
 
   Widget itemBuilder(BuildContext context, int index) {
-    //horizontal
+   
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 5),
       shape: RoundedRectangleBorder(
