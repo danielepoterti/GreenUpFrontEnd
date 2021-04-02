@@ -422,7 +422,7 @@ class MapScreenState extends State<MapScreen>
   Widget itemBuilder(BuildContext context, int index) {
    
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 5),
+      margin: EdgeInsets.only(left: 5, right: 5, bottom: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(13),
