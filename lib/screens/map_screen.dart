@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:fluster/fluster.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
@@ -378,7 +379,7 @@ class MapScreenState extends State<MapScreen>
                                   initialIndex: 0,
                                   itemCount: 10,
                                   itemBuilder: itemBuilder,
-                                  itemSize: 310,
+                                  itemSize: (MediaQuery.of(context).size.width-40) + 10,
                                   onItemFocus: (index) => print(index)),
                             ),
                             //     Card(
@@ -418,37 +419,56 @@ class MapScreenState extends State<MapScreen>
   }
 
   Widget itemBuilder(BuildContext context, int index) {
-    return Stack(children: [
-      Card(
-        margin: EdgeInsets.only(left: 5, right: 5, bottom: 30),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(13),
-          ),
-        ),
-        elevation: 5,
-        child: SizedBox(
-          child: InkWell(
-            onTap: () {
-              // setState(() {
-              //   isChargePointPressed = false;
-              // });
-            },
-          ),
-          width: 300,
-          height: 200,
+    return Card(
+      margin: EdgeInsets.only(left: 5, right: 5, bottom: 30),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(13),
         ),
       ),
-      Positioned(bottom: 50, right: 30, child: ClipOval(
-  child: Material(
-    color: const Color(0xff44a688), // button color
-    child: InkWell(
-      //splashColor: Colors.red, // inkwell color
-      child: SizedBox(width: 56, height: 56, child: Icon(Icons.directions_rounded, color: Colors.white,)),
-      onTap: () {},
-    ),
-  ),
-))
-    ]);
+      elevation: 5,
+      child: SizedBox(
+        child: Stack(children: [
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: ClipOval(
+              child: Material(
+                color: const Color(0xff44a688), // button color
+                child: InkWell(
+                  //splashColor: Colors.red, // inkwell color
+                  child: SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: Icon(
+                        Icons.directions_rounded,
+                        color: Colors.white,
+                      )),
+                  onTap: () {},
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            //left: 5,
+            
+            child: Padding(
+              padding: const EdgeInsets.only(left:20.0, top: 20.0, right: 20.0),
+              child: Column(
+                children: [
+                  Text(
+                    "VIA PIRELLI GIOVANNI BATTISTA 35-via Bordoni Antonio",
+                    
+                    style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ]),
+        width: (MediaQuery.of(context).size.width-40),
+        height: 300,
+      ),
+    );
   }
 }
