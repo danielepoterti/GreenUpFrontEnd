@@ -368,44 +368,42 @@ class MapScreenState extends State<MapScreen>
                     padding: const EdgeInsets.only(bottom: 180),
                     child: Container(
                       child: Row(
-                        
                         children: [
                           SlideTransition(
-                              position: _offsetAnimation,
-                              child:
-                                  SizedBox(
-                                    height: 200,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: ScrollSnapList(
-                                      initialIndex: 0,
-                                      itemCount: 10,
-                                        itemBuilder: itemBuilder,
-                                        itemSize: 310,
-                                        onItemFocus: (index) => print(index)),
-                                  ),
-                              //     Card(
-                              //   shape: RoundedRectangleBorder(
-                              //     borderRadius: BorderRadius.all(
-                              //       Radius.circular(13),
-                              //     ),
-                              //   ),
-                              //   elevation: 5,
-                              //   child: SizedBox(
-                              //     child: InkWell(
-                              //       onTap: () {
-                              //         // setState(() {
-                              //         //   isChargePointPressed = false;
-                              //         // });
-                              //       },
-                              //     ),
-                              //     width: 300,
-                              //     height: 100 +
-                              //         MediaQuery.of(context).size.height /
-                              //             100 *
-                              //             8,
-                              //   ),
-                              // ),
+                            position: _offsetAnimation,
+                            child: SizedBox(
+                              height: 200,
+                              width: MediaQuery.of(context).size.width,
+                              child: ScrollSnapList(
+                                  initialIndex: 0,
+                                  itemCount: 10,
+                                  itemBuilder: itemBuilder,
+                                  itemSize: 310,
+                                  onItemFocus: (index) => print(index)),
                             ),
+                            //     Card(
+                            //   shape: RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.all(
+                            //       Radius.circular(13),
+                            //     ),
+                            //   ),
+                            //   elevation: 5,
+                            //   child: SizedBox(
+                            //     child: InkWell(
+                            //       onTap: () {
+                            //         // setState(() {
+                            //         //   isChargePointPressed = false;
+                            //         // });
+                            //       },
+                            //     ),
+                            //     width: 300,
+                            //     height: 100 +
+                            //         MediaQuery.of(context).size.height /
+                            //             100 *
+                            //             8,
+                            //   ),
+                            // ),
+                          ),
                         ],
                       ),
                     ),
@@ -420,26 +418,37 @@ class MapScreenState extends State<MapScreen>
   }
 
   Widget itemBuilder(BuildContext context, int index) {
-   
-    return Card(
-      margin: EdgeInsets.only(left: 5, right: 5, bottom: 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(13),
+    return Stack(children: [
+      Card(
+        margin: EdgeInsets.only(left: 5, right: 5, bottom: 30),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(13),
+          ),
+        ),
+        elevation: 5,
+        child: SizedBox(
+          child: InkWell(
+            onTap: () {
+              // setState(() {
+              //   isChargePointPressed = false;
+              // });
+            },
+          ),
+          width: 300,
+          height: 200,
         ),
       ),
-      elevation: 5,
-      child: SizedBox(
-        child: InkWell(
-          onTap: () {
-            // setState(() {
-            //   isChargePointPressed = false;
-            // });
-          },
-        ),
-        width: 300,
-        height: 100 ,
-      ),
-    );
+      Positioned(bottom: 50, right: 30, child: ClipOval(
+  child: Material(
+    color: const Color(0xff44a688), // button color
+    child: InkWell(
+      //splashColor: Colors.red, // inkwell color
+      child: SizedBox(width: 56, height: 56, child: Icon(Icons.directions_rounded, color: Colors.white,)),
+      onTap: () {},
+    ),
+  ),
+))
+    ]);
   }
 }
