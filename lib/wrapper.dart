@@ -1,3 +1,4 @@
+import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'screens/map_screen.dart';
@@ -16,12 +17,28 @@ class Wrapper extends StatefulWidget {
   _WrapperState createState() => _WrapperState();
 }
 
-class _WrapperState extends State<Wrapper> {
+class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
   int _page = 0;
   bool autocompleteVisible = false;
   List<Widget> autocomplete;
   GlobalKey _bottomNavigationKey = GlobalKey();
   CurvedNavigationBarState navBarState;
+  AnimationController animationController;
+  Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+    animation = CurvedAnimation(
+      parent: animationController,
+      curve: Curves.easeIn,
+    );
+    //animationController.forward();
+  }
 
   void handleAutocompleteClick(element) async {
     await globalKey.currentState.handleMarkerClickCluster(
@@ -58,16 +75,18 @@ class _WrapperState extends State<Wrapper> {
   Widget _autocomplete() {
     if (autocompleteVisible) {
       return (Container(
-          width: 300,
-          child: MediaQuery.removePadding(
-              removeBottom: true,
-              context: context,
-              child: ListView(
-                padding: EdgeInsets.all(0),
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                children: autocomplete,
-              ))));
+        width: 300,
+        child: MediaQuery.removePadding(
+          removeBottom: true,
+          context: context,
+          child: ListView(
+            padding: EdgeInsets.all(0),
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            children: autocomplete,
+          ),
+        ),
+      ));
     } else {
       return Container();
     }
@@ -80,19 +99,24 @@ class _WrapperState extends State<Wrapper> {
           MapScreen(
             snapshot: widget.snapshot,
           ),
+          CircularRevealAnimation(
+            animation: animation,
+            centerAlignment: Alignment.bottomLeft,
+            child: Container(
+              color: Colors.white,
+            ),
+          ),
         ],
       ));
     } else if (_page == 1) {
       return (Stack(
         children: <Widget>[
           MapScreen(snapshot: widget.snapshot),
-          GestureDetector(
-            onTap: () {
-              navBarState = _bottomNavigationKey.currentState;
-              navBarState.setPage(0);
-            },
+          CircularRevealAnimation(
+            animation: animation,
+            centerAlignment: Alignment.bottomLeft,
             child: Container(
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white,
             ),
           ),
           Schedule(),
@@ -103,16 +127,17 @@ class _WrapperState extends State<Wrapper> {
         children: <Widget>[
           MapScreen(snapshot: widget.snapshot),
           Container(
-              margin: EdgeInsets.all(20),
-              child: Align(
-                  alignment: FractionalOffset.topCenter, child: Container())),
-          GestureDetector(
-            onTap: () {
-              navBarState = _bottomNavigationKey.currentState;
-              navBarState.setPage(0);
-            },
+            margin: EdgeInsets.all(20),
+            child: Align(
+              alignment: FractionalOffset.topCenter,
+              child: Container(),
+            ),
+          ),
+          CircularRevealAnimation(
+            animation: animation,
+            centerAlignment: Alignment.bottomLeft,
             child: Container(
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white,
             ),
           ),
           Prenotazioni(),
@@ -123,16 +148,17 @@ class _WrapperState extends State<Wrapper> {
         children: <Widget>[
           MapScreen(snapshot: widget.snapshot),
           Container(
-              margin: EdgeInsets.all(20),
-              child: Align(
-                  alignment: FractionalOffset.topCenter, child: Container())),
-          GestureDetector(
-            onTap: () {
-              navBarState = _bottomNavigationKey.currentState;
-              navBarState.setPage(0);
-            },
+            margin: EdgeInsets.all(20),
+            child: Align(
+              alignment: FractionalOffset.topCenter,
+              child: Container(),
+            ),
+          ),
+          CircularRevealAnimation(
+            animation: animation,
+            centerAlignment: Alignment.bottomLeft,
             child: Container(
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white,
             ),
           ),
           CreditCard(),
@@ -143,16 +169,17 @@ class _WrapperState extends State<Wrapper> {
         children: <Widget>[
           MapScreen(snapshot: widget.snapshot),
           Container(
-              margin: EdgeInsets.all(20),
-              child: Align(
-                  alignment: FractionalOffset.topCenter, child: Container())),
-          GestureDetector(
-            onTap: () {
-              navBarState = _bottomNavigationKey.currentState;
-              navBarState.setPage(0);
-            },
+            margin: EdgeInsets.all(20),
+            child: Align(
+              alignment: FractionalOffset.topCenter,
+              child: Container(),
+            ),
+          ),
+          CircularRevealAnimation(
+            animation: animation,
+            centerAlignment: Alignment.bottomLeft,
             child: Container(
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white,
             ),
           ),
           Profile(),
@@ -169,6 +196,7 @@ class _WrapperState extends State<Wrapper> {
         extendBodyBehindAppBar: true,
         extendBody: true,
         bottomNavigationBar: CurvedNavigationBar(
+          
           key: _bottomNavigationKey,
           index: 0,
           height: 75.0,
@@ -188,6 +216,31 @@ class _WrapperState extends State<Wrapper> {
           animationCurve: Curves.easeInOut,
           animationDuration: Duration(milliseconds: 600),
           onTap: (index) {
+            switch (index) {
+              case 0:
+                if (animationController.status == AnimationStatus.forward ||
+                    animationController.status == AnimationStatus.completed) {
+                  animationController.reverse();
+                }
+                break;
+
+              default:
+                if (animationController.status == AnimationStatus.reverse ||
+                    animationController.status == AnimationStatus.dismissed) {
+                  animationController.forward();
+                }
+                break;
+            }
+            print(
+                '===========================================================================');
+            print(animationController.status);
+            // if (animationController.status == AnimationStatus.forward ||
+            //     animationController.status == AnimationStatus.completed) {
+            //   animationController.reverse();
+            // } else {
+            //   animationController.forward();
+            // }
+
             setState(() {
               _page = index;
             });
