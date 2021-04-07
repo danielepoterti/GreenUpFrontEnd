@@ -232,9 +232,9 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
                 }
                 break;
             }
-            print(
-                '===========================================================================');
-            print(animationController.status);
+            // print(
+            //     '===========================================================================');
+            // print(animationController.status);
             // if (animationController.status == AnimationStatus.forward ||
             //     animationController.status == AnimationStatus.completed) {
             //   animationController.reverse();

@@ -3,6 +3,7 @@ import 'package:fluster/fluster.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:green_up/models/chargepoint_model.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
 import 'package:green_up/services/geolocator_service.dart';
 import 'package:green_up/services/map_helper.dart';
@@ -63,14 +64,15 @@ class MapScreenState extends State<MapScreen>
   /// Color of the cluster text
   final Color _clusterTextColor = Colors.white;
 
-  List<MapMarker> markerss = [];
-  List<MapMarker> nearby = [];
+  List<MapMarker> markersSelected = [];
+  //List<MapMarker> nearby = [];
+  List<ChargePoint> nearbyChargePoints = [];
 
   // initialize markers
   void _initMarkers() async {
     final List<MapMarker> markers = [];
     markers.addAll(data.markers);
-    markerss.addAll(data.markers);
+    markersSelected.addAll(data.markers);
     _clusterManager = await MapHelper.initClusterManager(
       markers,
       _minClusterZoom,
@@ -154,16 +156,18 @@ class MapScreenState extends State<MapScreen>
   Widget _autocomplete() {
     if (autocompleteVisible) {
       return (Container(
-          width: 300,
-          child: MediaQuery.removePadding(
-              removeBottom: true,
-              context: context,
-              child: ListView(
-                padding: EdgeInsets.all(0),
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                children: autocomplete,
-              ))));
+        width: 300,
+        child: MediaQuery.removePadding(
+          removeBottom: true,
+          context: context,
+          child: ListView(
+            padding: EdgeInsets.all(0),
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            children: autocomplete,
+          ),
+        ),
+      ));
     } else {
       return Container();
     }
@@ -188,14 +192,19 @@ class MapScreenState extends State<MapScreen>
   }
 
   void handleMarkerClickMarker(double long, double lat) async {
-    nearby.clear();
-    for (var i = 0; i < markerss.length; i++) {
-      if (getDistanceFromLatLonInKm(
-              lat, long, markerss[i].latitude, markerss[i].longitude) <
+    //nearby.clear();
+    nearbyChargePoints.clear();
+    for (var i = 0; i < markersSelected.length; i++) {
+      if (getDistanceFromLatLonInKm(lat, long, markersSelected[i].latitude,
+              markersSelected[i].longitude) <
           1.0) {
-        nearby.add(markerss[i]);
+        //nearby.add(markersSelected[i]);
+        nearbyChargePoints.add(data.chargePointfromMapMarker(markersSelected[i]));
       }
     }
+
+
+
     final GoogleMapController controller = await _controller.future;
     await controller
         .animateCamera(
@@ -412,35 +421,13 @@ class MapScreenState extends State<MapScreen>
                               width: MediaQuery.of(context).size.width,
                               child: ScrollSnapList(
                                   initialIndex: 0,
-                                  itemCount: nearby.length,
+                                  itemCount: nearbyChargePoints.length,
                                   itemBuilder: itemBuilder,
                                   itemSize:
                                       (MediaQuery.of(context).size.width - 40) +
                                           10,
                                   onItemFocus: (index) => print(index)),
                             ),
-                            //     Card(
-                            //   shape: RoundedRectangleBorder(
-                            //     borderRadius: BorderRadius.all(
-                            //       Radius.circular(13),
-                            //     ),
-                            //   ),
-                            //   elevation: 5,
-                            //   child: SizedBox(
-                            //     child: InkWell(
-                            //       onTap: () {
-                            //         // setState(() {
-                            //         //   isChargePointPressed = false;
-                            //         // });
-                            //       },
-                            //     ),
-                            //     width: 300,
-                            //     height: 100 +
-                            //         MediaQuery.of(context).size.height /
-                            //             100 *
-                            //             8,
-                            //   ),
-                            // ),
                           ),
                         ],
                       ),
@@ -495,7 +482,7 @@ class MapScreenState extends State<MapScreen>
               child: Column(
                 children: [
                   Text(
-                    "VIA PIRELLI GIOVANNI BATTISTA 35-via Bordoni Antonio",
+                    nearbyChargePoints[index].address.street,
                     style: GoogleFonts.roboto(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),

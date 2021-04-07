@@ -9,11 +9,11 @@ class Address {
   final String country;
 
   Address({
-    @required this.street,
-    @required this.houseNumber,
-    @required this.zipCode,
-    @required this.city,
-    @required this.country,
+    this.street,
+    this.houseNumber,
+    this.zipCode,
+    this.city,
+    this.country,
   });
 }
 
@@ -37,22 +37,21 @@ enum PowerType {
   dc,
 }
 
-enum PowerSupply{
+enum PowerSupply {
   kW7,
   kW22,
   kW50,
-
 }
 
 class ChargePoint {
-  final String id;           // chargeId
-  final Address address;     // indirizzo
-  final Status status;       // status (si suppone un solo plug)
-  final PlugType plug;       // tipo plug
-  final PowerSupply maxPower;     // numero kW massimi
+  final String id; // chargeId
+  final Address address; // indirizzo
+  final Status status; // status (si suppone un solo plug)
+  final PlugType plug; // tipo plug
+  final PowerSupply maxPower; // numero kW massimi
   final PowerType powerType; // AC o DC
-  final double cost;         // costo a chilowatt
-  final LatLng position;     // coordinate geografiche
+  final double cost; // costo a chilowatt
+  final LatLng position; // coordinate geografiche
 
   ChargePoint({
     @required this.id,

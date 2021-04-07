@@ -49,6 +49,10 @@ class ChargePoints with ChangeNotifier {
     return [..._chargePoints];
   }
 
+  ChargePoint chargePointfromMapMarker(MapMarker marker) {
+    return _chargePoints.where((element) => element.id == marker.id).first;
+  }
+
   Future<BitmapDescriptor> _setMarkerIcon(Status status) async {
     return await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(),
@@ -80,7 +84,9 @@ class ChargePoints with ChangeNotifier {
         return loadedChargers.add(
           ChargePoint(
             id: element['properties']['id'].toString(),
-            address: null,
+            address: Address(
+                city: "Milano",
+                street: element['properties']['localita'].toString()),
             status: Status.available,
             plug: null,
             maxPower: null,
@@ -110,7 +116,6 @@ class ChargePoints with ChangeNotifier {
     _chargePoints.forEach((element) {
       chargeMarkers.add(
         MapMarker(
-          
           id: element.id,
           position: element.position,
           icon: element.status == Status.available
