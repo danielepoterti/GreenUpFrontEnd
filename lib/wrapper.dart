@@ -102,7 +102,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
           ),
           CircularRevealAnimation(
             animation: animation,
-            centerAlignment: Alignment.bottomLeft,
+            centerAlignment: Alignment.bottomCenter,
             child: Container(
               color: Colors.white,
             ),
@@ -115,7 +115,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
           MapScreen(snapshot: widget.snapshot),
           CircularRevealAnimation(
             animation: animation,
-            centerAlignment: Alignment.bottomLeft,
+            centerAlignment: Alignment.bottomCenter,
             child: Container(
               color: Colors.white,
             ),
@@ -136,7 +136,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
           ),
           CircularRevealAnimation(
             animation: animation,
-            centerAlignment: Alignment.bottomLeft,
+            centerAlignment: Alignment.bottomCenter,
             child: Container(
               color: Colors.white,
             ),
@@ -157,7 +157,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
           ),
           CircularRevealAnimation(
             animation: animation,
-            centerAlignment: Alignment.bottomLeft,
+            centerAlignment: Alignment.bottomCenter,
             child: Container(
               color: Colors.white,
             ),
@@ -178,7 +178,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
           ),
           CircularRevealAnimation(
             animation: animation,
-            centerAlignment: Alignment.bottomLeft,
+            centerAlignment: Alignment.bottomCenter,
             child: Container(
               color: Colors.white,
             ),
