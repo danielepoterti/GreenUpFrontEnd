@@ -10,6 +10,7 @@ import 'package:green_up/services/map_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'searchbar.dart';
+import 'dart:math';
 
 class MapScreen extends StatefulWidget {
   dynamic snapshot;
@@ -62,10 +63,14 @@ class MapScreenState extends State<MapScreen>
   /// Color of the cluster text
   final Color _clusterTextColor = Colors.white;
 
+  List<MapMarker> markerss = [];
+  List<MapMarker> nearby = [];
+
   // initialize markers
   void _initMarkers() async {
     final List<MapMarker> markers = [];
     markers.addAll(data.markers);
+    markerss.addAll(data.markers);
     _clusterManager = await MapHelper.initClusterManager(
       markers,
       _minClusterZoom,
@@ -183,6 +188,14 @@ class MapScreenState extends State<MapScreen>
   }
 
   void handleMarkerClickMarker(double long, double lat) async {
+    nearby.clear();
+    for (var i = 0; i < markerss.length; i++) {
+      if (getDistanceFromLatLonInKm(
+              lat, long, markerss[i].latitude, markerss[i].longitude) <
+          1.0) {
+        nearby.add(markerss[i]);
+      }
+    }
     final GoogleMapController controller = await _controller.future;
     await controller
         .animateCamera(
@@ -201,8 +214,30 @@ class MapScreenState extends State<MapScreen>
     print('MARKER PRESSED');
   }
 
+  //calculate distance between two coordinates
+  double getDistanceFromLatLonInKm(
+      double lat1, double lon1, double lat2, double lon2) {
+    double R = 6371.0; // Radius of the earth in km
+    double dLat = deg2rad(lat2 - lat1); // deg2rad below
+    double dLon = deg2rad(lon2 - lon1);
+    var a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(deg2rad(lat1)) * cos(deg2rad(lat2)) * sin(dLon / 2) * sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double d = R * c; // Distance in km
+    return d;
+  }
+
+  double deg2rad(double deg) {
+    return deg * (pi / 180.0);
+  }
+
   //zoom on user current position
   void _currentLocation() async {
+//     new_latitude  = latitude  + (dy / r_earth) * (180 / pi);
+// new_longitude = longitude + (dx / r_earth) * (180 / pi) / cos(latitude * pi/180);
+    // double newLatitude =
+    //     widget.snapshot.latitude + (10.0 / 6378.0) * (180.0 / pi);
+    //print(newLatitude);
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
@@ -377,7 +412,7 @@ class MapScreenState extends State<MapScreen>
                               width: MediaQuery.of(context).size.width,
                               child: ScrollSnapList(
                                   initialIndex: 0,
-                                  itemCount: 10,
+                                  itemCount: nearby.length,
                                   itemBuilder: itemBuilder,
                                   itemSize:
                                       (MediaQuery.of(context).size.width - 40) +
@@ -454,7 +489,6 @@ class MapScreenState extends State<MapScreen>
           ),
           Positioned(
             //left: 5,
-
             child: Padding(
               padding:
                   const EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
