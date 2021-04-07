@@ -282,7 +282,7 @@ class MapScreenState extends State<MapScreen>
         Scaffold(
           resizeToAvoidBottomInset: false,
           body: GoogleMap(
-            padding: EdgeInsets.only(bottom: 85),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height/100 * 10),
             initialCameraPosition: snapshot == null
                 ? _kRoma
                 : CameraPosition(
