@@ -197,7 +197,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
         extendBodyBehindAppBar: true,
         extendBody: true,
         bottomNavigationBar: CurvedNavigationBar(
-          
+          shadow: 5,
           key: _bottomNavigationKey,
           index: 0,
           height: 75.0,
