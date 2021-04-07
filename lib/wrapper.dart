@@ -1,12 +1,13 @@
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:green_up/screens/curved_navigation_bar.dart';
 import 'screens/map_screen.dart';
 import 'screens/schedule_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/books_screen.dart';
 import 'screens/card_screen.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+
 
 GlobalKey<MapScreenState> globalKey = GlobalKey();
 

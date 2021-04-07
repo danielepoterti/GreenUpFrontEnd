@@ -29,7 +29,7 @@ dependencies:
   permission_handler: ^6.1.1
   fluster: ^1.1.2
   flutter_cache_manager: ^2.1.2
-  curved_navigation_bar: ^0.3.7
+  #curved_navigation_bar: ^0.3.7
   anim_search_bar: ^2.0.1
   location: ^4.1.1
   credit_card: 0.1.6

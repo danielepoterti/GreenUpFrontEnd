@@ -282,7 +282,7 @@ class MapScreenState extends State<MapScreen>
         Scaffold(
           resizeToAvoidBottomInset: false,
           body: GoogleMap(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height/100 * 10),
+            padding: EdgeInsets.only(bottom: 85),
             initialCameraPosition: snapshot == null
                 ? _kRoma
                 : CameraPosition(
@@ -379,7 +379,9 @@ class MapScreenState extends State<MapScreen>
                                   initialIndex: 0,
                                   itemCount: 10,
                                   itemBuilder: itemBuilder,
-                                  itemSize: (MediaQuery.of(context).size.width-40) + 10,
+                                  itemSize:
+                                      (MediaQuery.of(context).size.width - 40) +
+                                          10,
                                   onItemFocus: (index) => print(index)),
                             ),
                             //     Card(
@@ -438,12 +440,13 @@ class MapScreenState extends State<MapScreen>
                 child: InkWell(
                   //splashColor: Colors.red, // inkwell color
                   child: SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: Icon(
-                        Icons.directions_rounded,
-                        color: Colors.white,
-                      )),
+                    width: 56,
+                    height: 56,
+                    child: Icon(
+                      Icons.directions_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
                   onTap: () {},
                 ),
               ),
@@ -451,22 +454,23 @@ class MapScreenState extends State<MapScreen>
           ),
           Positioned(
             //left: 5,
-            
+
             child: Padding(
-              padding: const EdgeInsets.only(left:20.0, top: 20.0, right: 20.0),
+              padding:
+                  const EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
               child: Column(
                 children: [
                   Text(
                     "VIA PIRELLI GIOVANNI BATTISTA 35-via Bordoni Antonio",
-                    
-                    style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.roboto(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
           )
         ]),
-        width: (MediaQuery.of(context).size.width-40),
+        width: (MediaQuery.of(context).size.width - 40),
         height: 300,
       ),
     );
