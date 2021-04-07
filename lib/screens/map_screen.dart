@@ -199,11 +199,10 @@ class MapScreenState extends State<MapScreen>
               markersSelected[i].longitude) <
           1.0) {
         //nearby.add(markersSelected[i]);
-        nearbyChargePoints.add(data.chargePointfromMapMarker(markersSelected[i]));
+        nearbyChargePoints
+            .add(data.chargePointfromMapMarker(markersSelected[i]));
       }
     }
-
-
 
     final GoogleMapController controller = await _controller.future;
     await controller
@@ -242,11 +241,6 @@ class MapScreenState extends State<MapScreen>
 
   //zoom on user current position
   void _currentLocation() async {
-//     new_latitude  = latitude  + (dy / r_earth) * (180 / pi);
-// new_longitude = longitude + (dx / r_earth) * (180 / pi) / cos(latitude * pi/180);
-    // double newLatitude =
-    //     widget.snapshot.latitude + (10.0 / 6378.0) * (180.0 / pi);
-    //print(newLatitude);
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
@@ -426,7 +420,14 @@ class MapScreenState extends State<MapScreen>
                                   itemSize:
                                       (MediaQuery.of(context).size.width - 40) +
                                           10,
-                                  onItemFocus: (index) => print(index)),
+                                  onItemFocus: (index) =>
+                                      handleMarkerClickMarker(
+                                          nearbyChargePoints[index]
+                                              .position
+                                              .longitude,
+                                          nearbyChargePoints[index]
+                                              .position
+                                              .latitude)),
                             ),
                           ),
                         ],
