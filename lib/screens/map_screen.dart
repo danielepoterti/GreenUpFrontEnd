@@ -68,8 +68,8 @@ class MapScreenState extends State<MapScreen>
   }
 
   void handleAutocompleteClick(element) {
-    MapHelper.handleMarkerClickCluster(double.parse(element['coo']['long']),
-        double.parse(element['coo']['lat']));
+    MapHelper.handleMarkerClickCluster(element['geometry']['coordinates'][0],
+        element['geometry']['coordinates'][1]);
     setState(() {
       autocompleteVisible = false;
     });
@@ -89,7 +89,7 @@ class MapScreenState extends State<MapScreen>
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(4))),
-            child: Center(child: Text(element['name'])),
+            child: Center(child: Text(element['properties']['name'])),
           )));
     });
     setState(() {
@@ -403,6 +403,4 @@ class MapScreenState extends State<MapScreen>
       ],
     );
   }
-
-  
 }

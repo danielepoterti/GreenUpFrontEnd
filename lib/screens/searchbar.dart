@@ -27,13 +27,11 @@ class _SearchState extends State<Search> {
   // callback fired every time input change
   void handleTextChanges() async {
     if (textController.text.length > 2) {
-      final url = Uri.https(
-        'michelebanfi.github.io',
-        'data/place.json',
-      );
+      final url = Uri.parse(
+          'https://photon.komoot.io/api/?q=${textController.text}&limit=5');
       final response = await http.get(url);
       Map<String, dynamic> map = json.decode(response.body);
-      List<dynamic> data = map["data"];
+      List<dynamic> data = map["features"];
       this.callback(data);
     }
   }

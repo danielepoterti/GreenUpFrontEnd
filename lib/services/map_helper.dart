@@ -215,8 +215,6 @@ class MapHelper {
   );
   static String styleOfMapJSON;
 
-
-
   // static Future<void> initMarkers() async {
   //   final List<MapMarker> markers = [];
   //   markers.addAll(data.markers);
@@ -274,6 +272,4 @@ class MapHelper {
   static void setMapstyle(GoogleMapController controller) async {
     controller.setMapStyle(styleOfMapJSON);
   }
-
-  
 }
