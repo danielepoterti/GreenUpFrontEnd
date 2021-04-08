@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -7,6 +8,8 @@ import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_up/models/chargepoint_model.dart';
+import 'package:green_up/providers/chargepoints_provider.dart';
 import 'package:green_up/services/map_marker.dart';
 
 /// In here we are encapsulating all the logic required to get marker icons from url images
@@ -187,4 +190,90 @@ class MapHelper {
       return mapMarker.toMarker();
     }).toList());
   }
+
+  //TODO: check for duplicated variable in logic
+  static ChargePoints data;
+  static List<MapMarker> markersSelected = [];
+  static Fluster<MapMarker> clusterManager;
+  static final int minClusterZoom = 0;
+  static final int maxClusterZoom = 19;
+  static double currentZoomLevel = 0;
+  static double currentZoom = 15;
+  static final Color clusterColor = Colors.blue;
+  static final Color clusterTextColor = Colors.white;
+  static List<double> box = [0, 0, 0, 0];
+  static GoogleMapController controllerMap;
+  static Completer<GoogleMapController> controllerCompleterMap = Completer();
+  static List<ChargePoint> nearbyChargePoints = [];
+  static bool isChargePointPressed = false;
+  static AnimationController controllerChargePointCard;
+  static Animation<Offset> offsetAnimation;
+  static final Set<Marker> markers = Set();
+  static final CameraPosition kRoma = CameraPosition(
+    target: LatLng(41.893056, 12.482778),
+    zoom: 11,
+  );
+  static String styleOfMapJSON;
+
+
+
+  // static Future<void> initMarkers() async {
+  //   final List<MapMarker> markers = [];
+  //   markers.addAll(data.markers);
+  //   markersSelected.addAll(data.markers);
+  //   clusterManager = await initClusterManager(
+  //     markers,
+  //     minClusterZoom,
+  //     maxClusterZoom,
+  //   );
+  //   await MapScreen.updateMarkers();
+  // }
+
+  static Future<void> updateZoomLevel([double updatedZoom]) async {
+    LatLngBounds area = await controllerMap.getVisibleRegion();
+    MapHelper.box = [
+      area.southwest.longitude,
+      area.southwest.latitude,
+      area.northeast.longitude,
+      area.northeast.latitude
+    ];
+    MapHelper.currentZoomLevel = updatedZoom;
+  }
+
+  //callback that handle markers tap anz zoom on tapped marker
+  static Future<void> handleMarkerClickCluster(double long, double lat) async {
+    // TODO: check this duplicated variable
+    final GoogleMapController controller = await controllerCompleterMap.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 0,
+          target: LatLng(lat, long),
+          zoom: 13.0,
+        ),
+      ),
+    );
+  }
+
+  static double getDistanceFromLatLonInKm(
+      double lat1, double lon1, double lat2, double lon2) {
+    double R = 6371.0; // Radius of the earth in km
+    double dLat = deg2rad(lat2 - lat1); // deg2rad below
+    double dLon = deg2rad(lon2 - lon1);
+    var a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(deg2rad(lat1)) * cos(deg2rad(lat2)) * sin(dLon / 2) * sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double d = R * c; // Distance in km
+    return d;
+  }
+
+  static double deg2rad(double deg) {
+    return deg * (pi / 180.0);
+  }
+
+  static void setMapstyle(GoogleMapController controller) async {
+    controller.setMapStyle(styleOfMapJSON);
+  }
+
+  
 }

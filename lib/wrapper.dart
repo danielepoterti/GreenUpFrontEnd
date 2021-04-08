@@ -2,6 +2,7 @@ import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:green_up/screens/curved_navigation_bar.dart';
+import 'package:green_up/services/map_helper.dart';
 import 'screens/map_screen.dart';
 import 'screens/schedule_screen.dart';
 import 'screens/profile_screen.dart';
@@ -41,8 +42,8 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
     //animationController.forward();
   }
 
-  void handleAutocompleteClick(element) async {
-    await globalKey.currentState.handleMarkerClickCluster(
+  Future<void> handleAutocompleteClick(element) async {
+    await MapHelper.handleMarkerClickCluster(
         double.parse(element['coo']['long']),
         double.parse(element['coo']['lat']));
     setState(() {

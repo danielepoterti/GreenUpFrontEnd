@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'package:fluster/fluster.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:green_up/models/chargepoint_model.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
 import 'package:green_up/services/geolocator_service.dart';
 import 'package:green_up/services/map_helper.dart';
@@ -11,110 +9,57 @@ import 'package:green_up/services/map_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'searchbar.dart';
-import 'dart:math';
 
 class MapScreen extends StatefulWidget {
   dynamic snapshot;
-  MapScreen({@required this.snapshot}) {}
+  MapScreen({@required this.snapshot});
   @override
   State<MapScreen> createState() => MapScreenState();
 }
 
 class MapScreenState extends State<MapScreen>
     with SingleTickerProviderStateMixin {
-  AnimationController _controllerChargePointCard;
-  Animation<Offset> _offsetAnimation;
-
   //TODO: fix duplicated variables
-  double previousZoom = 0;
-  double currentZoomLevel = 0;
-  GoogleMapController conti;
+
   bool autocompleteVisible = false;
   List<Widget> autocomplete;
 
-  List<double> box = [0, 0, 0, 0];
-
   bool isInit = true;
-  bool isChargePointPressed = false;
 
-  /// Set of displayed markers and cluster markers on the map
-  final Set<Marker> _markers = Set();
-
-  /// Minimum zoom at which the markers will cluster
-  final int _minClusterZoom = 0;
-
-  /// Maximum zoom at which the markers will cluster
-  final int _maxClusterZoom = 19;
-
-  /// [Fluster] instance used to manage the clusters
-  Fluster<MapMarker> _clusterManager;
-
-  /// Current map zoom. Initial zoom will be 15, street level
-  double _currentZoom = 15;
-
-  /// Map loading flag
-  //bool _isMapLoading = true;
-
-  /// Markers loading flag
-  //bool _areMarkersLoading = true;
-
-  /// Color of the cluster circle
-  final Color _clusterColor = Colors.blue;
-
-  /// Color of the cluster text
-  final Color _clusterTextColor = Colors.white;
-
-  List<MapMarker> markersSelected = [];
-  //List<MapMarker> nearby = [];
-  List<ChargePoint> nearbyChargePoints = [];
-
-  // initialize markers
   void _initMarkers() async {
     final List<MapMarker> markers = [];
-    markers.addAll(data.markers);
-    markersSelected.addAll(data.markers);
-    _clusterManager = await MapHelper.initClusterManager(
+    markers.addAll(MapHelper.data.markers);
+    MapHelper.markersSelected.addAll(MapHelper.data.markers);
+    MapHelper.clusterManager = await MapHelper.initClusterManager(
       markers,
-      _minClusterZoom,
-      _maxClusterZoom,
+      MapHelper.minClusterZoom,
+      MapHelper.maxClusterZoom,
     );
     await _updateMarkers();
-  }
-
-  // update current zoom level
-  Future<void> _updateZoomLevel([double updatedZoom]) async {
-    LatLngBounds area = await conti.getVisibleRegion();
-    box = [
-      area.southwest.longitude,
-      area.southwest.latitude,
-      area.northeast.longitude,
-      area.northeast.latitude
-    ];
-    currentZoomLevel = updatedZoom;
   }
 
   /// Gets the markers and clusters to be displayed on the map for the current zoom level and
   /// updates state.
   Future<void> _updateMarkers() async {
-    if (_clusterManager == null) return;
+    if (MapHelper.clusterManager == null) return;
 
-    if (currentZoomLevel != null) {
-      _currentZoom = currentZoomLevel;
+    if (MapHelper.currentZoomLevel != null) {
+      MapHelper.currentZoom = MapHelper.currentZoomLevel;
     }
     setState(() {
       //  _areMarkersLoading = true;
     });
     final updatedMarkers = await MapHelper.getClusterMarkers(
-      _clusterManager,
-      currentZoomLevel,
-      _clusterColor,
-      _clusterTextColor,
+      MapHelper.clusterManager,
+      MapHelper.currentZoomLevel,
+      MapHelper.clusterColor,
+      MapHelper.clusterTextColor,
       80,
-      box,
-      handleMarkerClickCluster,
+      MapHelper.box,
+      MapHelper.handleMarkerClickCluster,
       handleMarkerClickMarker,
     );
-    _markers
+    MapHelper.markers
       ..clear()
       ..addAll(updatedMarkers);
     setState(() {
@@ -123,7 +68,7 @@ class MapScreenState extends State<MapScreen>
   }
 
   void handleAutocompleteClick(element) {
-    handleMarkerClickCluster(double.parse(element['coo']['long']),
+    MapHelper.handleMarkerClickCluster(double.parse(element['coo']['long']),
         double.parse(element['coo']['lat']));
     setState(() {
       autocompleteVisible = false;
@@ -173,38 +118,24 @@ class MapScreenState extends State<MapScreen>
     }
   }
 
-  //callback that handle markers tap anz zoom on tapped marker
-  void handleMarkerClickCluster(double long, double lat) async {
-    // print('MARKER PRESSED');
-    // setState(() {
-    //   isChargePointPressed = true;
-    // });
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          bearing: 0,
-          target: LatLng(lat, long),
-          zoom: 13.0,
-        ),
-      ),
-    );
-  }
-
   void handleMarkerClickMarker(double long, double lat) async {
     //nearby.clear();
-    nearbyChargePoints.clear();
-    for (var i = 0; i < markersSelected.length; i++) {
-      if (getDistanceFromLatLonInKm(lat, long, markersSelected[i].latitude,
-              markersSelected[i].longitude) <
+    MapHelper.nearbyChargePoints.clear();
+    for (var i = 0; i < MapHelper.markersSelected.length; i++) {
+      if (MapHelper.getDistanceFromLatLonInKm(
+              lat,
+              long,
+              MapHelper.markersSelected[i].latitude,
+              MapHelper.markersSelected[i].longitude) <
           1.0) {
         //nearby.add(markersSelected[i]);
-        nearbyChargePoints
-            .add(data.chargePointfromMapMarker(markersSelected[i]));
+        MapHelper.nearbyChargePoints.add(MapHelper.data
+            .chargePointfromMapMarker(MapHelper.markersSelected[i]));
       }
     }
 
-    final GoogleMapController controller = await _controller.future;
+    final GoogleMapController controller =
+        await MapHelper.controllerCompleterMap.future;
     await controller
         .animateCamera(
           CameraUpdate.newCameraPosition(
@@ -216,32 +147,16 @@ class MapScreenState extends State<MapScreen>
           ),
         )
         .then((value) => setState(() {
-              isChargePointPressed = true;
+              MapHelper.isChargePointPressed = true;
             }));
-    _controllerChargePointCard.forward();
+    MapHelper.controllerChargePointCard.forward();
     print('MARKER PRESSED');
-  }
-
-  //calculate distance between two coordinates
-  double getDistanceFromLatLonInKm(
-      double lat1, double lon1, double lat2, double lon2) {
-    double R = 6371.0; // Radius of the earth in km
-    double dLat = deg2rad(lat2 - lat1); // deg2rad below
-    double dLon = deg2rad(lon2 - lon1);
-    var a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(deg2rad(lat1)) * cos(deg2rad(lat2)) * sin(dLon / 2) * sin(dLon / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    double d = R * c; // Distance in km
-    return d;
-  }
-
-  double deg2rad(double deg) {
-    return deg * (pi / 180.0);
   }
 
   //zoom on user current position
   void _currentLocation() async {
-    final GoogleMapController controller = await _controller.future;
+    final GoogleMapController controller =
+        await MapHelper.controllerCompleterMap.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         bearing: 0,
@@ -258,192 +173,19 @@ class MapScreenState extends State<MapScreen>
   }
 
   final GeolocatorService geo = GeolocatorService();
-  Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition _kRoma = CameraPosition(
-    target: LatLng(41.893056, 12.482778),
-    zoom: 11,
-  );
-
-  String _style;
-
-  void _setMapstyle(GoogleMapController controller) async {
-    controller.setMapStyle(_style);
-  }
-
-  @override
-  void initState() {
-    _controllerChargePointCard = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-    _offsetAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 2),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controllerChargePointCard,
-        curve: Curves.elasticInOut,
+  FloatingActionButton buildCurrentLocationButton() {
+    return FloatingActionButton(
+      backgroundColor: Colors.white,
+      onPressed: _currentLocation,
+      child: Icon(
+        Icons.location_searching_sharp,
+        color: Colors.black,
       ),
     );
-    super.initState();
   }
 
-  ChargePoints data;
-  @override
-  Future<void> didChangeDependencies() async {
-    if (isInit) {
-      data = Provider.of<ChargePoints>(context);
-      _style = await DefaultAssetBundle.of(context)
-          .loadString('./assets/map_style.json');
-      await data.initIcons();
-      await data.initChargers(context).then((_) => _initMarkers());
-
-      setState(() {
-        isInit = !isInit;
-      });
-    }
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controllerChargePointCard.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var snapshot = widget.snapshot;
-    return Stack(
-      children: [
-        Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: GoogleMap(
-            padding: EdgeInsets.only(bottom: 85),
-            initialCameraPosition: snapshot == null
-                ? _kRoma
-                : CameraPosition(
-                    target: LatLng(
-                      snapshot.latitude,
-                      snapshot.longitude,
-                    ),
-                    zoom: _currentZoom,
-                  ),
-            markers: Set<Marker>.of(_markers),
-            zoomControlsEnabled: false,
-            onCameraMoveStarted: () {
-              if (isChargePointPressed)
-                setState(() {
-                  isChargePointPressed = false;
-                });
-              _controllerChargePointCard.reverse();
-            },
-            onMapCreated: (GoogleMapController controller) {
-              _setMapstyle(controller);
-              conti = controller;
-              try {
-                _controller.complete(controller);
-              } catch (e) {
-                throw e;
-              }
-              setState(() {
-                //  _isMapLoading = false;
-              });
-            },
-            onCameraMove: (position) => _updateZoomLevel(position.zoom),
-            onCameraIdle: () => _updateMarkers(),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            mapToolbarEnabled: false,
-            compassEnabled: false,
-            buildingsEnabled: false,
-          ),
-          floatingActionButton: snapshot != null
-              ? Padding(
-                  padding: const EdgeInsets.only(bottom: 90.0),
-                  child: FloatingActionButton(
-                    backgroundColor: Colors.white,
-                    onPressed: _currentLocation,
-                    child: Icon(
-                      Icons.location_searching_sharp,
-                      color: Colors.black,
-                    ),
-                  ),
-                )
-              : null,
-        ),
-        Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Search(
-                        callback: getAutocomplete,
-                        prefixTap: handlePrefix,
-                        width: MediaQuery.of(context).size.width - 40,
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _autocomplete(),
-              ],
-            ),
-
-            //children: autocomplete,
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 180),
-                    child: Container(
-                      child: Row(
-                        children: [
-                          SlideTransition(
-                            position: _offsetAnimation,
-                            child: SizedBox(
-                              height: 200,
-                              width: MediaQuery.of(context).size.width,
-                              child: ScrollSnapList(
-                                  initialIndex: 0,
-                                  itemCount: nearbyChargePoints.length,
-                                  itemBuilder: itemBuilder,
-                                  itemSize:
-                                      (MediaQuery.of(context).size.width - 40) +
-                                          10,
-                                  onItemFocus: (index) =>
-                                      handleMarkerClickMarker(
-                                          nearbyChargePoints[index]
-                                              .position
-                                              .longitude,
-                                          nearbyChargePoints[index]
-                                              .position
-                                              .latitude)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget itemBuilder(BuildContext context, int index) {
+  Widget chargePointCardsBuilder(BuildContext context, int index) {
     return Card(
       margin: EdgeInsets.only(left: 5, right: 5, bottom: 30),
       shape: RoundedRectangleBorder(
@@ -483,7 +225,7 @@ class MapScreenState extends State<MapScreen>
               child: Column(
                 children: [
                   Text(
-                    nearbyChargePoints[index].address.street,
+                    MapHelper.nearbyChargePoints[index].address.street,
                     style: GoogleFonts.roboto(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
@@ -497,4 +239,170 @@ class MapScreenState extends State<MapScreen>
       ),
     );
   }
+
+  @override
+  void initState() {
+    MapHelper.controllerChargePointCard = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    MapHelper.offsetAnimation = Tween<Offset>(
+      begin: const Offset(0.0, 2),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: MapHelper.controllerChargePointCard,
+        curve: Curves.elasticInOut,
+      ),
+    );
+    super.initState();
+  }
+
+  //ChargePoints data;
+
+  @override
+  Future<void> didChangeDependencies() async {
+    if (isInit) {
+      MapHelper.data = Provider.of<ChargePoints>(context);
+      MapHelper.styleOfMapJSON = await DefaultAssetBundle.of(context)
+          .loadString('./assets/map_style.json');
+      await MapHelper.data.initIcons();
+      await MapHelper.data.initChargers(context).then((_) => _initMarkers());
+
+      setState(() {
+        isInit = !isInit;
+      });
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    MapHelper.controllerChargePointCard.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var snapshot = widget.snapshot;
+    return Stack(
+      children: [
+        Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: GoogleMap(
+            padding: EdgeInsets.only(bottom: 85),
+            initialCameraPosition: snapshot == null
+                ? MapHelper.kRoma
+                : CameraPosition(
+                    target: LatLng(
+                      snapshot.latitude,
+                      snapshot.longitude,
+                    ),
+                    zoom: MapHelper.currentZoom,
+                  ),
+            markers: Set<Marker>.of(MapHelper.markers),
+            zoomControlsEnabled: false,
+            onCameraMoveStarted: () {
+              if (MapHelper.isChargePointPressed)
+                setState(() {
+                  MapHelper.isChargePointPressed = false;
+                });
+              MapHelper.controllerChargePointCard.reverse();
+            },
+            onMapCreated: (GoogleMapController controller) {
+              MapHelper.setMapstyle(controller);
+              MapHelper.controllerMap = controller;
+              try {
+                MapHelper.controllerCompleterMap.complete(controller);
+              } catch (e) {
+                throw e;
+              }
+              setState(() {
+                //  _isMapLoading = false;
+              });
+            },
+            onCameraMove: (position) =>
+                MapHelper.updateZoomLevel(position.zoom),
+            onCameraIdle: () => _updateMarkers(),
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            mapToolbarEnabled: false,
+            compassEnabled: false,
+            buildingsEnabled: false,
+          ),
+          floatingActionButton: snapshot != null
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 90.0),
+                  child: buildCurrentLocationButton(),
+                )
+              : null,
+        ),
+        Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Search(
+                        callback: getAutocomplete,
+                        prefixTap: handlePrefix,
+                        width: MediaQuery.of(context).size.width - 40,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _autocomplete(),
+              ],
+            ),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 180),
+                    child: Container(
+                      child: Row(
+                        children: [
+                          SlideTransition(
+                            position: MapHelper.offsetAnimation,
+                            child: SizedBox(
+                              height: 200,
+                              width: MediaQuery.of(context).size.width,
+                              child: ScrollSnapList(
+                                  initialIndex: 0,
+                                  itemCount:
+                                      MapHelper.nearbyChargePoints.length,
+                                  itemBuilder: chargePointCardsBuilder,
+                                  itemSize:
+                                      (MediaQuery.of(context).size.width - 40) +
+                                          10,
+                                  onItemFocus: (index) =>
+                                      handleMarkerClickMarker(
+                                          MapHelper.nearbyChargePoints[index]
+                                              .position.longitude,
+                                          MapHelper.nearbyChargePoints[index]
+                                              .position.latitude)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  
 }

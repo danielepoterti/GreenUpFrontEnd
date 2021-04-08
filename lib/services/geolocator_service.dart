@@ -6,7 +6,7 @@ class GeolocatorService {
   static Future<PermissionStatus> getPermission() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
-    LocationData _locationData;
+    //LocationData _locationData;
     Location location = new Location();
 
     _serviceEnabled = await location.serviceEnabled();
