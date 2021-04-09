@@ -214,6 +214,7 @@ class MapHelper {
     zoom: 11,
   );
   static String styleOfMapJSON;
+  static bool isSliding = false;
 
   // static Future<void> initMarkers() async {
   //   final List<MapMarker> markers = [];

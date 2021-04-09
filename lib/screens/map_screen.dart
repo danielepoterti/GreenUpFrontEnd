@@ -21,6 +21,8 @@ class MapScreenState extends State<MapScreen>
     with SingleTickerProviderStateMixin {
   //TODO: fix duplicated variables
 
+  final keySnaplist = GlobalKey<ScrollSnapListState>();
+
   bool autocompleteVisible = false;
   List<Widget> autocomplete;
 
@@ -120,6 +122,7 @@ class MapScreenState extends State<MapScreen>
 
   void handleMarkerClickMarker(double long, double lat) async {
     //nearby.clear();
+    keySnaplist.currentState.focusToInitialPosition();
     MapHelper.nearbyChargePoints.clear();
     for (var i = 0; i < MapHelper.markersSelected.length; i++) {
       if (MapHelper.getDistanceFromLatLonInKm(
@@ -132,6 +135,14 @@ class MapScreenState extends State<MapScreen>
         MapHelper.nearbyChargePoints.add(MapHelper.data
             .chargePointfromMapMarker(MapHelper.markersSelected[i]));
       }
+      MapHelper.nearbyChargePoints.sort(
+        (a, b) => MapHelper.getDistanceFromLatLonInKm(
+                lat, long, a.position.latitude, a.position.longitude)
+            .compareTo(
+          MapHelper.getDistanceFromLatLonInKm(
+              lat, long, b.position.latitude, b.position.longitude),
+        ),
+      );
     }
 
     final GoogleMapController controller =
@@ -151,6 +162,22 @@ class MapScreenState extends State<MapScreen>
             }));
     MapHelper.controllerChargePointCard.forward();
     print('MARKER PRESSED');
+  }
+
+  void handlerChangeFocusChargePointList(double long, double lat) async {
+    MapHelper.isSliding = true;
+    final GoogleMapController controller =
+        await MapHelper.controllerCompleterMap.future;
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 0,
+          target: LatLng(lat, long),
+          zoom: 17.0,
+        ),
+      ),
+    );
+    MapHelper.isSliding = false;
   }
 
   //zoom on user current position
@@ -303,11 +330,12 @@ class MapScreenState extends State<MapScreen>
             markers: Set<Marker>.of(MapHelper.markers),
             zoomControlsEnabled: false,
             onCameraMoveStarted: () {
-              if (MapHelper.isChargePointPressed)
+              if (MapHelper.isChargePointPressed && !MapHelper.isSliding) {
                 setState(() {
                   MapHelper.isChargePointPressed = false;
                 });
-              MapHelper.controllerChargePointCard.reverse();
+                MapHelper.controllerChargePointCard.reverse();
+              }
             },
             onMapCreated: (GoogleMapController controller) {
               MapHelper.setMapstyle(controller);
@@ -376,6 +404,7 @@ class MapScreenState extends State<MapScreen>
                               height: 200,
                               width: MediaQuery.of(context).size.width,
                               child: ScrollSnapList(
+                                key: keySnaplist,
                                   initialIndex: 0,
                                   itemCount:
                                       MapHelper.nearbyChargePoints.length,
@@ -383,12 +412,20 @@ class MapScreenState extends State<MapScreen>
                                   itemSize:
                                       (MediaQuery.of(context).size.width - 40) +
                                           10,
-                                  onItemFocus: (index) =>
-                                      handleMarkerClickMarker(
-                                          MapHelper.nearbyChargePoints[index]
-                                              .position.longitude,
-                                          MapHelper.nearbyChargePoints[index]
-                                              .position.latitude)),
+                                  onItemFocus: (index)
+                                      // =>
+                                      //     handleMarkerClickMarker(
+                                      //         MapHelper.nearbyChargePoints[index]
+                                      //             .position.longitude,
+                                      //         MapHelper.nearbyChargePoints[index]
+                                      //             .position.latitude)
+                                      {
+                                    handlerChangeFocusChargePointList(
+                                        MapHelper.nearbyChargePoints[index]
+                                            .position.longitude,
+                                        MapHelper.nearbyChargePoints[index]
+                                            .position.latitude);
+                                  }),
                             ),
                           ),
                         ],
