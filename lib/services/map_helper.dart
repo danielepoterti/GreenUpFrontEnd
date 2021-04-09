@@ -243,12 +243,13 @@ class MapHelper {
   static Future<void> handleMarkerClickCluster(double long, double lat) async {
     // TODO: check this duplicated variable
     final GoogleMapController controller = await controllerCompleterMap.future;
+    currentZoom = await controller.getZoomLevel();
     controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           bearing: 0,
           target: LatLng(lat, long),
-          zoom: 13.0,
+          zoom: currentZoom + 3,
         ),
       ),
     );
