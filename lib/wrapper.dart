@@ -1,7 +1,7 @@
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:green_up/screens/curved_navigation_bar.dart';
+import 'package:green_up/widgets/curved_navigation_bar.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'screens/map_screen.dart';
 import 'screens/schedule_screen.dart';

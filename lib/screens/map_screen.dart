@@ -8,7 +8,7 @@ import 'package:green_up/services/map_helper.dart';
 import 'package:green_up/services/map_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
-import 'searchbar.dart';
+import '../widgets/searchbar.dart';
 
 class MapScreen extends StatefulWidget {
   dynamic snapshot;
@@ -250,26 +250,29 @@ class MapScreenState extends State<MapScreen>
               padding: const EdgeInsets.only(left: 20.0, right: 20.0),
               child: Text(
                 MapHelper.nearbyChargePoints[index].address.city,
-                style: GoogleFonts.roboto(fontWeight: FontWeight.w200),
+                style: GoogleFonts.roboto(
+                    fontSize: 20, fontWeight: FontWeight.w200),
               ),
             ),
           ),
           Positioned(
             //top: 35,
             child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, top: 35, right: 20.0),
+              padding: const EdgeInsets.only(left: 20.0, top: 40, right: 20.0),
               child: Column(
                 children: [
                   Text(
                     MapHelper.nearbyChargePoints[index].address.street,
                     softWrap: true,
                     style: GoogleFonts.roboto(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
-          )
+          ),
         ]),
         width: (MediaQuery.of(context).size.width - 40),
         height: 300,
