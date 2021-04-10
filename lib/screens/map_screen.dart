@@ -245,14 +245,24 @@ class MapScreenState extends State<MapScreen>
             ),
           ),
           Positioned(
-            //left: 5,
+            top: 17.5,
             child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Text(
+                MapHelper.nearbyChargePoints[index].address.city,
+                style: GoogleFonts.roboto(fontWeight: FontWeight.w200),
+              ),
+            ),
+          ),
+          Positioned(
+            //top: 35,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0, top: 35, right: 20.0),
               child: Column(
                 children: [
                   Text(
                     MapHelper.nearbyChargePoints[index].address.street,
+                    softWrap: true,
                     style: GoogleFonts.roboto(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
@@ -404,7 +414,7 @@ class MapScreenState extends State<MapScreen>
                               height: 200,
                               width: MediaQuery.of(context).size.width,
                               child: ScrollSnapList(
-                                key: keySnaplist,
+                                  key: keySnaplist,
                                   initialIndex: 0,
                                   itemCount:
                                       MapHelper.nearbyChargePoints.length,

@@ -32,10 +32,10 @@ enum PlugType {
   type2S,
 }
 
-enum PowerType {
-  ac,
-  dc,
-}
+// enum PowerType {
+//   ac,
+//   dc,
+// }
 
 enum PowerSupply {
   kW7,
@@ -49,9 +49,11 @@ class ChargePoint {
   final Status status; // status (si suppone un solo plug)
   final PlugType plug; // tipo plug
   final PowerSupply maxPower; // numero kW massimi
-  final PowerType powerType; // AC o DC
+  // final PowerType powerType; // AC o DC
+  final String powerType;
   final double cost; // costo a chilowatt
-  final LatLng position; // coordinate geografiche
+  final LatLng position;
+  final String owner; // coordinate geografiche
 
   ChargePoint({
     @required this.id,
@@ -62,5 +64,6 @@ class ChargePoint {
     @required this.powerType,
     @required this.cost,
     @required this.position,
+    @required this.owner,
   });
 }

@@ -83,6 +83,7 @@ class ChargePoints with ChangeNotifier {
       positionMap['features'].forEach((element) {
         return loadedChargers.add(
           ChargePoint(
+            owner: element['properties']['titolare'].toString(),
             id: element['properties']['id'].toString(),
             address: Address(
                 city: "Milano",
@@ -90,7 +91,7 @@ class ChargePoints with ChangeNotifier {
             status: Status.available,
             plug: null,
             maxPower: null,
-            powerType: null,
+            powerType: element['properties']['tipo_ricar'].toString(),
             cost: null,
             position: LatLng(element['geometry']['coordinates'][0][1],
                 element['geometry']['coordinates'][0][0]),
