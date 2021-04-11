@@ -6,6 +6,7 @@ import 'package:green_up/providers/chargepoints_provider.dart';
 import 'package:green_up/services/geolocator_service.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'package:green_up/services/map_marker.dart';
+import 'package:green_up/widgets/circular_button.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import '../widgets/searchbar.dart';
@@ -272,6 +273,11 @@ class MapScreenState extends State<MapScreen>
                 ],
               ),
             ),
+          ),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            child: new LoadingButton(),
           ),
         ]),
         width: (MediaQuery.of(context).size.width - 40),
