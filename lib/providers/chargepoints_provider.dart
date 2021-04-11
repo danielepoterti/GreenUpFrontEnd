@@ -1,9 +1,14 @@
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_up/models/chargepoint_model.dart';
 import 'package:green_up/services/map_marker.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:ui' as ui;
+import 'dart:io' show Platform;
 
 class ChargePoints with ChangeNotifier {
   BitmapDescriptor _iconAvailable;
@@ -54,15 +59,33 @@ class ChargePoints with ChangeNotifier {
   }
 
   Future<BitmapDescriptor> _setMarkerIcon(Status status) async {
-    return await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(),
-        status == Status.available
-            ? 'assets/images/chargingAvailable128px.png'
-            : status == Status.unavailable
-                ? 'assets/images/chargingAvailable.png'
-                : status == Status.occupied
-                    ? 'assets/images/chargingAvailable.png'
-                    : '');
+    //apparentemente se si usano i byte le dimensioni non si buggano su iOS, tengo cosi per sicurezza
+    int width = Platform.isAndroid ? 128 : 128;
+    String path;
+    switch (status) {
+      case Status.available:
+        path = 'assets/images/chargingAvailable128px.png';
+        break;
+      case Status.unavailable:
+        path = 'assets/images/chargingUnavailable.png';
+        break;
+      case Status.occupied:
+        path = 'assets/images/chargingOccupied.png';
+        break;
+    }
+
+    Uint8List byte = await getBytesFromAsset(path, 100);
+    return await BitmapDescriptor.fromBytes(byte);
+
+    // return await BitmapDescriptor.fromAssetImage(
+    //     ImageConfiguration(),
+    //     status == Status.available
+    //         ? 'assets/images/chargingAvailable100px.png'
+    //         : status == Status.unavailable
+    //             ? 'assets/images/chargingAvailable.png'
+    //             : status == Status.occupied
+    //                 ? 'assets/images/chargingAvailable.png'
+    //                 : '');
   }
 
   initChargers(BuildContext context) async {
@@ -106,7 +129,7 @@ class ChargePoints with ChangeNotifier {
   }
 
   initIcons() async {
-    _iconAvailable = await _setMarkerIcon(Status.available);
+    _iconAvailable = (await _setMarkerIcon(Status.available));
     _iconOccupied = await _setMarkerIcon(Status.occupied);
     _iconUnavailable = await _setMarkerIcon(Status.unavailable);
   }
@@ -135,5 +158,15 @@ class ChargePoints with ChangeNotifier {
 
   ChargePoint findById(String id) {
     return _chargePoints.firstWhere((element) => element.id == id);
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+        .buffer
+        .asUint8List();
   }
 }

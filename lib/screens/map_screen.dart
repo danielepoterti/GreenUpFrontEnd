@@ -10,6 +10,7 @@ import 'package:green_up/widgets/circular_button.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import '../widgets/searchbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapScreen extends StatefulWidget {
   dynamic snapshot;
@@ -240,7 +241,13 @@ class MapScreenState extends State<MapScreen>
                       color: Colors.white,
                     ),
                   ),
-                  onTap: () {},
+                  onTap: () async {
+                    String url =
+                        'https://www.google.com/maps/dir/?api=1&destination=${MapHelper.nearbyChargePoints[index].position.latitude},${MapHelper.nearbyChargePoints[index].position.longitude}';
+                    await canLaunch(url)
+                        ? await launch(url)
+                        : throw 'Could not launch google maps';
+                  },
                 ),
               ),
             ),

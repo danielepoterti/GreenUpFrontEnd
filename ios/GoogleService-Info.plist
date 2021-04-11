@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>716211417503-h743l9bt7h6clbk2igd1btp8fo7l8lrb.apps.googleusercontent.com</string>
+	<string>924784134552-4uuahivhbo7kjrsr9sk9opjqi9sle988.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.716211417503-h743l9bt7h6clbk2igd1btp8fo7l8lrb</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>716211417503-e2uiif3k5jpevmfi7phr5at3k7pve1v8.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.924784134552-4uuahivhbo7kjrsr9sk9opjqi9sle988</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDdnEw1io5su4jmMnUqk9rqWthDWeNQKe0</string>
+	<string>AIzaSyDwOmkeqfJNVpnFXYgDw8PTcGiOKJJ6iIQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>716211417503</string>
+	<string>924784134552</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.test.greenUp</string>
 	<key>PROJECT_ID</key>
-	<string>test-dce9c</string>
+	<string>greenup-f9c27</string>
 	<key>STORAGE_BUCKET</key>
-	<string>test-dce9c.appspot.com</string>
+	<string>greenup-f9c27.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:716211417503:ios:63425ac495569ff9218daa</string>
+	<string>1:924784134552:ios:c4e76f95c2c7478d2083ed</string>
 </dict>
 </plist>

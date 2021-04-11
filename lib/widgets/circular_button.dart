@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../screens/transaction_screen.dart';
 
 class LoadingButton extends StatefulWidget {
   @override
@@ -30,10 +31,13 @@ class LoadingButtonState extends State<LoadingButton>
           controller.reverse();
           print('press not finished');
           return Fluttertoast.showToast(
-              msg: "Tieni premuto per iniziare la ricarica",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              /*timeInSecForIosWeb: 1*/);
+            msg: "Tieni premuto per iniziare la ricarica",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            /*timeInSecForIosWeb: 1*/
+          );
+        } else if (controller.status == AnimationStatus.completed) {
+          Navigator.of(context).push(_createRoute());
         }
       },
       /*onTap: () => {print('tap')},*/
@@ -63,6 +67,25 @@ class LoadingButtonState extends State<LoadingButton>
           )
         ],
       ),
+    );
+  }
+
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => Transaction(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(0.0, 1.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
     );
   }
 }
