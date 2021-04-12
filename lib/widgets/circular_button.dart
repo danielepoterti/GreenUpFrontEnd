@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../screens/transaction_screen.dart';
+import 'package:green_up/services/map_helper.dart';
 
+// ignore: must_be_immutable
 class LoadingButton extends StatefulWidget {
+  int index;
+  LoadingButton(this.index);
   @override
   LoadingButtonState createState() => LoadingButtonState();
 }
@@ -37,7 +41,10 @@ class LoadingButtonState extends State<LoadingButton>
             /*timeInSecForIosWeb: 1*/
           );
         } else if (controller.status == AnimationStatus.completed) {
+          MapHelper.selectedForTransaction =
+              MapHelper.nearbyChargePoints[widget.index];
           Navigator.of(context).push(_createRoute());
+          controller.reverse();
         }
       },
       /*onTap: () => {print('tap')},*/

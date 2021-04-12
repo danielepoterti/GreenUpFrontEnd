@@ -215,6 +215,8 @@ class MapHelper {
   );
   static String styleOfMapJSON;
   static bool isSliding = false;
+  static ChargePoint selectedForTransaction;
+  static AssetImage chargingGif = AssetImage("assets/images/battery-charge.gif",);
 
   // static Future<void> initMarkers() async {
   //   final List<MapMarker> markers = [];

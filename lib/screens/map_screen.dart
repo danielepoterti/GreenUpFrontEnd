@@ -284,7 +284,7 @@ class MapScreenState extends State<MapScreen>
           Positioned(
             bottom: 20,
             left: 20,
-            child: new LoadingButton(),
+            child: LoadingButton(index),
           ),
         ]),
         width: (MediaQuery.of(context).size.width - 40),
@@ -325,6 +325,7 @@ class MapScreenState extends State<MapScreen>
       setState(() {
         isInit = !isInit;
       });
+      precacheImage(MapHelper.chargingGif, context).then((value) => print('OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK'));
     }
     super.didChangeDependencies();
   }
