@@ -11,20 +11,17 @@ class Transaction extends StatefulWidget {
 
 class _TransactionState extends State<Transaction>
     with SingleTickerProviderStateMixin {
-  GifController controller;
-  
-  @override
-  void initState() {
-    super.initState();
-    
-    controller = GifController(vsync: this);
-  }
+  GifController controllerGif;
 
   @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-     
+  void initState() {
+    controllerGif = GifController(vsync: this);
     
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controllerGif.repeat(min:0, max: 185,  period: Duration(seconds: 4));
+    });
+
+    super.initState();
   }
 
   @override
@@ -33,9 +30,11 @@ class _TransactionState extends State<Transaction>
       backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
-          GifImage(
-            controller: controller,
-            image: MapHelper.chargingGif,
+          SizedBox(
+            child: GifImage(
+              controller: controllerGif,
+              image: MapHelper.chargingGif,
+            ),
           ),
           Container(
             child: Padding(
