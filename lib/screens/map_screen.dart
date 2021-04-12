@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
@@ -325,7 +326,7 @@ class MapScreenState extends State<MapScreen>
       setState(() {
         isInit = !isInit;
       });
-      precacheImage(MapHelper.chargingGif, context).then((value) => print('OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK'));
+      fetchGif(MapHelper.chargingGif);
     }
     super.didChangeDependencies();
   }
