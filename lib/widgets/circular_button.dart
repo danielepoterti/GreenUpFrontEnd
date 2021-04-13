@@ -29,7 +29,14 @@ class LoadingButtonState extends State<LoadingButton>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => controller.forward(),
+      onTapDown: (_) => controller.forward().then((value) {
+        if (controller.status == AnimationStatus.completed) {
+          MapHelper.selectedForTransaction =
+              MapHelper.nearbyChargePoints[widget.index];
+          Navigator.of(context).push(_createRoute());
+          controller.reverse();
+        }
+      }),
       onTapUp: (_) {
         if (controller.status == AnimationStatus.forward) {
           controller.reverse();
