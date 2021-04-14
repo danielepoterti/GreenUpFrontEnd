@@ -20,7 +20,10 @@ class _TransactionState extends State<Transaction>
   Future<void> doSomething() async {
     Timer(Duration(seconds: 3), () {
       btnController.success();
-      Timer(Duration(seconds: 1), () {
+      controllerGif.stop();
+        controllerGif.animateTo(104, duration: Duration(milliseconds: 2000));
+      Timer(Duration(milliseconds: 2100), () {
+        
         Navigator.pop(context);
       });
     });
@@ -30,11 +33,7 @@ class _TransactionState extends State<Transaction>
   void initState() {
     controllerGif = GifController(vsync: this);
     btnController = RoundedLoadingButtonController();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controllerGif.repeat(min: 0, max: 185, period: Duration(seconds: 4));
-    });
-
+    controllerGif.value = 122;
     super.initState();
   }
 
@@ -46,6 +45,19 @@ class _TransactionState extends State<Transaction>
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      controllerGif.animateTo(141, duration: Duration(milliseconds: 300));
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      controllerGif.animateTo(184, duration: Duration(milliseconds: 600));
+      Future.delayed(const Duration(milliseconds: 600), () {
+        controllerGif.value = 0;
+        controllerGif.repeat(
+            min: 0, max: 5, reverse: true, period: Duration(milliseconds: 600));
+      });
+    });
+
     return WillPopScope(
       onWillPop: () async {
         final value = await showDialog<bool>(
