@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../screens/transaction_screen.dart';
 import 'package:green_up/services/map_helper.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 // ignore: must_be_immutable
 class LoadingButton extends StatefulWidget {
@@ -14,6 +15,7 @@ class LoadingButton extends StatefulWidget {
 class LoadingButtonState extends State<LoadingButton>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
+  FirebaseFunctions functions = FirebaseFunctions.instance;
 
   @override
   void initState() {
@@ -26,11 +28,26 @@ class LoadingButtonState extends State<LoadingButton>
     });
   }
 
+  void startTransaction() async {
+    //following line only for android emulator
+    FirebaseFunctions.instance
+        .useFunctionsEmulator(origin: 'http://localhost:5001');
+    try {
+      HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable('startTransaction');
+      final response = await callable();
+      print(response.data);
+    } on FirebaseFunctionsException catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (_) => controller.forward().then((value) {
         if (controller.status == AnimationStatus.completed) {
+          startTransaction();
           MapHelper.selectedForTransaction =
               MapHelper.nearbyChargePoints[widget.index];
           Navigator.of(context).push(_createRoute());
@@ -48,6 +65,7 @@ class LoadingButtonState extends State<LoadingButton>
             /*timeInSecForIosWeb: 1*/
           );
         } else if (controller.status == AnimationStatus.completed) {
+          startTransaction();
           MapHelper.selectedForTransaction =
               MapHelper.nearbyChargePoints[widget.index];
           Navigator.of(context).push(_createRoute());

@@ -6,6 +6,7 @@ import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class Transaction extends StatefulWidget {
   @override
@@ -18,12 +19,12 @@ class _TransactionState extends State<Transaction>
   RoundedLoadingButtonController btnController;
 
   Future<void> doSomething() async {
+    stopTransaction();
     Timer(Duration(seconds: 3), () {
       btnController.success();
       controllerGif.stop();
-        controllerGif.animateTo(104, duration: Duration(milliseconds: 2000));
+      controllerGif.animateTo(104, duration: Duration(milliseconds: 2000));
       Timer(Duration(milliseconds: 2100), () {
-        
         Navigator.pop(context);
       });
     });
@@ -41,6 +42,20 @@ class _TransactionState extends State<Transaction>
   void dispose() {
     controllerGif.dispose();
     super.dispose();
+  }
+
+  void stopTransaction() async {
+    //following line only for android emulator
+    FirebaseFunctions.instance
+        .useFunctionsEmulator(origin: 'http://localhost:5001');
+    try {
+      HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable('startTransaction');
+      final response = await callable();
+      print(response.data);
+    } on FirebaseFunctionsException catch (e) {
+      print(e);
+    }
   }
 
   @override
