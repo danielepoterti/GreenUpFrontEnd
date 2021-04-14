@@ -50,7 +50,7 @@ class _TransactionState extends State<Transaction>
         .useFunctionsEmulator(origin: 'http://localhost:5001');
     try {
       HttpsCallable callable =
-          FirebaseFunctions.instance.httpsCallable('startTransaction');
+          FirebaseFunctions.instance.httpsCallable('stopTransaction');
       final response = await callable();
       print(response.data);
     } on FirebaseFunctionsException catch (e) {
