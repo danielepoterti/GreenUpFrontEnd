@@ -15,7 +15,6 @@ class LoadingButton extends StatefulWidget {
 class LoadingButtonState extends State<LoadingButton>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
-  FirebaseFunctions functions = FirebaseFunctions.instance;
 
   @override
   void initState() {
@@ -29,17 +28,11 @@ class LoadingButtonState extends State<LoadingButton>
   }
 
   void startTransaction() async {
-    //following line only for android emulator
-    FirebaseFunctions.instance
-        .useFunctionsEmulator(origin: 'http://localhost:5001');
-    try {
-      HttpsCallable callable =
-          FirebaseFunctions.instance.httpsCallable('startTransaction');
-      final response = await callable();
-      print(response.data);
-    } on FirebaseFunctionsException catch (e) {
-      print(e);
-    }
+    HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('connectedChargingStations');
+    final results = await callable();
+    List fruit = results.data;
+    print(fruit);
   }
 
   @override

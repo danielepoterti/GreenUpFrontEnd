@@ -45,12 +45,9 @@ class _TransactionState extends State<Transaction>
   }
 
   void stopTransaction() async {
-    //following line only for android emulator
-    FirebaseFunctions.instance
-        .useFunctionsEmulator(origin: 'http://localhost:5001');
     try {
       HttpsCallable callable =
-          FirebaseFunctions.instance.httpsCallable('stopTransaction');
+          FirebaseFunctions.instance.httpsCallable('connectedChargingStations');
       final response = await callable();
       print(response.data);
     } on FirebaseFunctionsException catch (e) {
