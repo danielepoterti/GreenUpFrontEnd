@@ -18,18 +18,6 @@ class _TransactionState extends State<Transaction>
   GifController controllerGif;
   RoundedLoadingButtonController btnController;
 
-  Future<void> doSomething() async {
-    stopTransaction();
-    Timer(Duration(seconds: 3), () {
-      btnController.success();
-      controllerGif.stop();
-      controllerGif.animateTo(104, duration: Duration(milliseconds: 2000));
-      Timer(Duration(milliseconds: 2100), () {
-        Navigator.pop(context);
-      });
-    });
-  }
-
   @override
   void initState() {
     controllerGif = GifController(vsync: this);
@@ -47,28 +35,63 @@ class _TransactionState extends State<Transaction>
   void stopTransaction() async {
     try {
       HttpsCallable callable =
-          FirebaseFunctions.instance.httpsCallable('connectedChargingStations');
-      final response = await callable();
-      print(response.data);
+          FirebaseFunctions.instance.httpsCallable('stopTransaction');
+      await callable
+          .call(<String, String>{'chargebox_id': 'due'}).then((value) {
+        print(value.data);
+        if (value.data != "FATAL") {
+          btnController.success();
+          controllerGif.stop();
+          controllerGif.animateTo(104, duration: Duration(milliseconds: 2000));
+          Timer(Duration(milliseconds: 2100), () {
+            Navigator.pop(context);
+          });
+        } else {
+          Navigator.pop(context);
+        }
+      });
     } on FirebaseFunctionsException catch (e) {
       print(e);
+      print(e.code);
+      print(e.message);
+      print(e.details);
+    }
+  }
+
+  void startTransaction() async {
+    try {
+      HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable('startTransaction');
+      await callable
+          .call(<String, String>{'chargebox_id': 'due'}).then((value) {
+        print(value.data);
+        if (value.data != "FATAL") {
+          Future.delayed(const Duration(seconds: 1), () {
+            controllerGif.animateTo(184, duration: Duration(milliseconds: 600));
+            Future.delayed(const Duration(milliseconds: 600), () {
+              controllerGif.value = 0;
+              controllerGif.repeat(
+                  min: 0,
+                  max: 5,
+                  reverse: true,
+                  period: Duration(milliseconds: 600));
+            });
+          });
+        } else {
+          Navigator.pop(context);
+        }
+      });
+    } on FirebaseFunctionsException catch (e) {
+      print(e);
+      print(e.code);
+      print(e.message);
+      print(e.details);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      controllerGif.animateTo(141, duration: Duration(milliseconds: 300));
-    });
-
-    Future.delayed(const Duration(seconds: 1), () {
-      controllerGif.animateTo(184, duration: Duration(milliseconds: 600));
-      Future.delayed(const Duration(milliseconds: 600), () {
-        controllerGif.value = 0;
-        controllerGif.repeat(
-            min: 0, max: 5, reverse: true, period: Duration(milliseconds: 600));
-      });
-    });
+    startTransaction();
 
     return WillPopScope(
       onWillPop: () async {
@@ -153,7 +176,7 @@ class _TransactionState extends State<Transaction>
                       child: Text('Termina sessione',
                           style: TextStyle(color: Colors.white)),
                       controller: btnController,
-                      onPressed: doSomething,
+                      onPressed: stopTransaction,
                     ),
                   ),
                 ],
