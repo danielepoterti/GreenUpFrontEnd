@@ -283,6 +283,28 @@ class MapScreenState extends State<MapScreen>
             ),
           ),
           Positioned(
+            top: 80,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Text(
+                MapHelper.nearbyChargePoints[index].owner,
+                style: GoogleFonts.roboto(
+                    fontSize: 15, fontWeight: FontWeight.w200),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 100,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Text(
+                MapHelper.nearbyChargePoints[index].powerType,
+                style: GoogleFonts.roboto(
+                    fontSize: 15, fontWeight: FontWeight.w200),
+              ),
+            ),
+          ),
+          Positioned(
             bottom: 20,
             left: 20,
             child: LoadingButton(index),
@@ -422,14 +444,14 @@ class MapScreenState extends State<MapScreen>
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 180),
+                    padding: const EdgeInsets.only(bottom: 120),
                     child: Container(
                       child: Row(
                         children: [
                           SlideTransition(
                             position: MapHelper.offsetAnimation,
                             child: SizedBox(
-                              height: 200,
+                              height: 250,
                               width: MediaQuery.of(context).size.width,
                               child: ScrollSnapList(
                                   key: keySnaplist,

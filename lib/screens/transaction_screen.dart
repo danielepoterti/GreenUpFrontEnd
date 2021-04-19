@@ -17,12 +17,14 @@ class _TransactionState extends State<Transaction>
     with SingleTickerProviderStateMixin {
   GifController controllerGif;
   RoundedLoadingButtonController btnController;
+  String statusText = "Inizializzazione ricarica...";
 
   @override
   void initState() {
     controllerGif = GifController(vsync: this);
     btnController = RoundedLoadingButtonController();
     controllerGif.value = 122;
+    startTransaction();
     super.initState();
   }
 
@@ -33,6 +35,9 @@ class _TransactionState extends State<Transaction>
   }
 
   void stopTransaction() async {
+    setState(() {
+      statusText = "Terminazione ricarica in corso...";
+    });
     try {
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('stopTransaction');
@@ -40,6 +45,9 @@ class _TransactionState extends State<Transaction>
           .call(<String, String>{'chargebox_id': 'due'}).then((value) {
         print(value.data);
         if (value.data != "FATAL") {
+          setState(() {
+            statusText = "Ricarica terminata";
+          });
           btnController.success();
           controllerGif.stop();
           controllerGif.animateTo(104, duration: Duration(milliseconds: 2000));
@@ -66,6 +74,9 @@ class _TransactionState extends State<Transaction>
           .call(<String, String>{'chargebox_id': 'due'}).then((value) {
         print(value.data);
         if (value.data != "FATAL") {
+          setState(() {
+            statusText = "Ricarica in corso";
+          });
           Future.delayed(const Duration(seconds: 1), () {
             controllerGif.animateTo(184, duration: Duration(milliseconds: 600));
             Future.delayed(const Duration(milliseconds: 600), () {
@@ -91,8 +102,6 @@ class _TransactionState extends State<Transaction>
 
   @override
   Widget build(BuildContext context) {
-    startTransaction();
-
     return WillPopScope(
       onWillPop: () async {
         final value = await showDialog<bool>(
@@ -143,7 +152,24 @@ class _TransactionState extends State<Transaction>
             Container(
               child: Padding(
                 padding: EdgeInsets.only(
-                    left: 30, bottom: MediaQuery.of(context).size.height / 3),
+                    left: 30, bottom: MediaQuery.of(context).size.height / 2),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      statusText,
+                      style: GoogleFonts.roboto(
+                          fontSize: 30, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: 30, bottom: MediaQuery.of(context).size.height / 4),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -158,6 +184,24 @@ class _TransactionState extends State<Transaction>
                       style: GoogleFonts.roboto(
                         fontSize: 30,
                         fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "Fornitore: " + MapHelper.selectedForTransaction.owner,
+                        style: GoogleFonts.roboto(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w100,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "Tipologia: " +
+                          MapHelper.selectedForTransaction.powerType,
+                      style: GoogleFonts.roboto(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w100,
                       ),
                     ),
                   ],
