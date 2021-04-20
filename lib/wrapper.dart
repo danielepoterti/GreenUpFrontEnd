@@ -1,13 +1,11 @@
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:green_up/screens/transactions_list_screen.dart';
 import 'package:green_up/widgets/curved_navigation_bar.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'screens/map_screen.dart';
-import 'screens/schedule_screen.dart';
 import 'screens/profile_screen.dart';
-import 'screens/books_screen.dart';
-import 'screens/card_screen.dart';
 
 GlobalKey<MapScreenState> globalKey = GlobalKey();
 
@@ -114,58 +112,12 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
         children: <Widget>[
           MapScreen(snapshot: widget.snapshot),
           CircularRevealAnimation(
-            animation: animation,
-            centerAlignment: Alignment.bottomCenter,
-            child: Container(
-              color: Colors.white,
-            ),
-          ),
-          Schedule(),
+              animation: animation,
+              centerAlignment: Alignment.bottomCenter,
+              child: TransactionsListScreen()),
         ],
       ));
     } else if (_page == 2) {
-      return (Stack(
-        children: <Widget>[
-          MapScreen(snapshot: widget.snapshot),
-          Container(
-            margin: EdgeInsets.all(20),
-            child: Align(
-              alignment: FractionalOffset.topCenter,
-              child: Container(),
-            ),
-          ),
-          CircularRevealAnimation(
-            animation: animation,
-            centerAlignment: Alignment.bottomCenter,
-            child: Container(
-              color: Colors.white,
-            ),
-          ),
-          Prenotazioni(),
-        ],
-      ));
-    } else if (_page == 3) {
-      return (Stack(
-        children: <Widget>[
-          MapScreen(snapshot: widget.snapshot),
-          Container(
-            margin: EdgeInsets.all(20),
-            child: Align(
-              alignment: FractionalOffset.topCenter,
-              child: Container(),
-            ),
-          ),
-          CircularRevealAnimation(
-            animation: animation,
-            centerAlignment: Alignment.bottomCenter,
-            child: Container(
-              color: Colors.white,
-            ),
-          ),
-          CreditCard(),
-        ],
-      ));
-    } else if (_page == 4) {
       return (Stack(
         children: <Widget>[
           MapScreen(snapshot: widget.snapshot),
@@ -203,12 +155,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
           height: 75.0,
           items: <Widget>[
             Icon(Icons.map, size: 30),
-            Icon(Icons.schedule, size: 30),
             Icon(Icons.list, size: 30),
-            Icon(
-              Icons.credit_card,
-              size: 30,
-            ),
             Icon(Icons.person, size: 30),
           ],
           color: Colors.white,
