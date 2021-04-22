@@ -10,6 +10,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_up/models/chargepoint_model.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
+import 'package:green_up/providers/transcations_provider.dart';
 import 'package:green_up/services/map_marker.dart';
 
 /// In here we are encapsulating all the logic required to get marker icons from url images
@@ -192,7 +193,8 @@ class MapHelper {
   }
 
   //TODO: check for duplicated variable in logic
-  static ChargePoints data;
+  static ChargePoints dataChargePoints;
+  static Transactions dataTransactions;
   static List<MapMarker> markersSelected = [];
   static Fluster<MapMarker> clusterManager;
   static final int minClusterZoom = 0;

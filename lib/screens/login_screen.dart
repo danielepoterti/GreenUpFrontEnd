@@ -100,12 +100,12 @@ class _LoginState extends State<Login> {
         appBar: AppBar(
           elevation: 0,
           title: Text('Login'),
-          backgroundColor: Colors.green,
+          backgroundColor: const Color(0xff44a688),
         ),
         body: Container(
             height: double.infinity,
             width: double.infinity,
-            color: Colors.green,
+            color: const Color(0xff44a688),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Column(
@@ -174,7 +174,7 @@ class _LoginState extends State<Login> {
                                   style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateColor.resolveWith(
-                                              (states) => Colors.green),
+                                              (states) => const Color(0xff44a688)),
                                       shape: MaterialStateProperty.all(
                                           RoundedRectangleBorder(
                                               borderRadius:

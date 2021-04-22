@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
+import 'package:green_up/providers/transcations_provider.dart';
 import 'package:green_up/services/geolocator_service.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -52,6 +53,11 @@ class _MyApp extends State<MyApp> {
         ChangeNotifierProvider(
           create: (BuildContext context) {
             return ChargePoints();
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (BuildContext context) {
+            return Transactions();
           },
         )
       ],

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
+import 'package:green_up/providers/transcations_provider.dart';
 import 'package:green_up/services/geolocator_service.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'package:green_up/services/map_marker.dart';
@@ -33,8 +34,8 @@ class MapScreenState extends State<MapScreen>
 
   void _initMarkers() async {
     final List<MapMarker> markers = [];
-    markers.addAll(MapHelper.data.markers);
-    MapHelper.markersSelected.addAll(MapHelper.data.markers);
+    markers.addAll(MapHelper.dataChargePoints.markers);
+    MapHelper.markersSelected.addAll(MapHelper.dataChargePoints.markers);
     MapHelper.clusterManager = await MapHelper.initClusterManager(
       markers,
       MapHelper.minClusterZoom,
@@ -135,7 +136,7 @@ class MapScreenState extends State<MapScreen>
               MapHelper.markersSelected[i].longitude) <
           1.0) {
         //nearby.add(markersSelected[i]);
-        MapHelper.nearbyChargePoints.add(MapHelper.data
+        MapHelper.nearbyChargePoints.add(MapHelper.dataChargePoints
             .chargePointfromMapMarker(MapHelper.markersSelected[i]));
       }
       MapHelper.nearbyChargePoints.sort(
@@ -339,15 +340,19 @@ class MapScreenState extends State<MapScreen>
   @override
   Future<void> didChangeDependencies() async {
     if (isInit) {
-      MapHelper.data = Provider.of<ChargePoints>(context);
-      MapHelper.styleOfMapJSON = await DefaultAssetBundle.of(context)
-          .loadString('./assets/map_style.json');
-      await MapHelper.data.initIcons();
-      await MapHelper.data.initChargers(context).then((_) => _initMarkers());
-
       setState(() {
         isInit = !isInit;
       });
+      MapHelper.dataChargePoints = Provider.of<ChargePoints>(context);
+      MapHelper.dataTransactions = Provider.of<Transactions>(context);
+      MapHelper.styleOfMapJSON = await DefaultAssetBundle.of(context)
+          .loadString('./assets/map_style.json');
+      await MapHelper.dataChargePoints.initIcons();
+      await MapHelper.dataChargePoints
+          .initChargers(context)
+          .then((_) => _initMarkers());
+      print("sos");
+      await MapHelper.dataTransactions.initTransactions(context);
       fetchGif(MapHelper.chargingGif);
     }
     super.didChangeDependencies();
