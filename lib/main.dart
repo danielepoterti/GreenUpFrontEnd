@@ -6,10 +6,13 @@ import 'package:green_up/services/geolocator_service.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'screens/login_screen.dart';
 import 'wrapper.dart';
+import 'dart:convert';
 
+FirebaseAuth auth = FirebaseAuth.instance;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
@@ -40,10 +43,38 @@ class _MyApp extends State<MyApp> {
       });
     } else {
       String value = await storage.read(key: 'login');
-      setState(() {
-        login = value;
-      });
+      bool validCredentials = await loginFromDisk(value);
+      print(validCredentials);
+      if (validCredentials) {
+        setState(() {
+          login = value;
+        });
+      } else {
+        setState(() {
+          login = null;
+        });
+      }
     }
+  }
+
+  Future<bool> loginFromDisk(String data) async {
+    final dati = json.decode(data);
+    String mail = dati['mail'];
+    String psw = dati['psw'];
+    bool isGood = true;
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: mail, password: psw);
+    } on FirebaseAuthException catch (e) {
+      isGood = false;
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+    //successfully logged in
+    return isGood;
   }
 
   @override

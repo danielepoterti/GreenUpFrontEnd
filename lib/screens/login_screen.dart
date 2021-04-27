@@ -174,7 +174,8 @@ class _LoginState extends State<Login> {
                                   style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateColor.resolveWith(
-                                              (states) => const Color(0xff44a688)),
+                                              (states) =>
+                                                  const Color(0xff44a688)),
                                       shape: MaterialStateProperty.all(
                                           RoundedRectangleBorder(
                                               borderRadius:
