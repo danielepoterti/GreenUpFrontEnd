@@ -1,20 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'signup_screen.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 
-class Login extends StatefulWidget {
+class SignUp extends StatefulWidget {
   final FlutterSecureStorage storage;
   final Function getLogin;
-  Login(this.storage, this.getLogin);
+  SignUp(this.storage, this.getLogin);
   @override
-  _LoginState createState() => _LoginState(storage, getLogin);
+  _SignUp createState() => _SignUp(storage, getLogin);
 }
 
-class _LoginState extends State<Login> {
+class _SignUp extends State<SignUp> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final Function getLogin;
@@ -22,23 +22,27 @@ class _LoginState extends State<Login> {
   final FlutterSecureStorage storage;
 
   //constructor
-  _LoginState(this.storage, this.getLogin);
+  _SignUp(this.storage, this.getLogin);
 
-  void login() async {
+  void register() async {
+    print('here');
     bool isGood = true;
     try {
       UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
+          .createUserWithEmailAndPassword(
               email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
       isGood = false;
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
       }
+    } catch (e) {
+      isGood = false;
+      print(e);
     }
-    //successfully logged in
+    //succesfully registered
     if (isGood) {
       String data =
           '{\"mail\": \"${emailController.text}\", \"psw\": \"${passwordController.text}\"}';
@@ -74,8 +78,12 @@ class _LoginState extends State<Login> {
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
-          title: Text('Login'),
+          title: Text('SignUp'),
           backgroundColor: const Color(0xff44a688),
+          leading: IconButton(
+            icon: Icon(CupertinoIcons.back),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
         body: Container(
             height: double.infinity,
@@ -155,27 +163,11 @@ class _LoginState extends State<Login> {
                                           RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(18)))),
-                                  onPressed: login,
-                                  child: Text('Login')),
+                                  onPressed: register,
+                                  child: Text('SingUp')),
                               SizedBox(
                                 height: 10,
                               ),
-                              Text(
-                                'You dont have and account?',
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            SignUp(storage, getLogin))),
-                                child: Text('Sign Up',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                        decoration: TextDecoration.underline)),
-                              )
                               //ElevatedButton(onPressed: google, child: Text('Google')),
                             ],
                           ),
