@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class MapScreenState extends State<MapScreen>
   //TODO: fix duplicated variables
 
   final keySnaplist = GlobalKey<ScrollSnapListState>();
+  
 
   bool autocompleteVisible = false;
   List<Widget> autocomplete;
@@ -76,9 +78,11 @@ class MapScreenState extends State<MapScreen>
   void handleAutocompleteClick(element) {
     MapHelper.handleMarkerClickCluster(element['geometry']['coordinates'][0],
         element['geometry']['coordinates'][1]);
+    MapHelper.keyAnimationSearch.currentState.onPressHandler();
     setState(() {
       autocompleteVisible = false;
     });
+
   }
 
   List getAutocomplete(List list) {
@@ -111,11 +115,29 @@ class MapScreenState extends State<MapScreen>
         child: MediaQuery.removePadding(
           removeBottom: true,
           context: context,
-          child: ListView(
-            padding: EdgeInsets.all(0),
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            children: autocomplete,
+          child: SafeArea(
+            child: AnimationLimiter(
+              child: ListView.builder(
+                itemCount: autocomplete.length,
+                padding: EdgeInsets.all(0),
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                //children: autocomplete,
+                itemBuilder: (context, index) {
+                  return AnimationConfiguration.staggeredList(
+                    //key: keyListPlace,
+                    duration: const Duration(milliseconds: 375),
+                    position: index,
+                    child: SlideAnimation(
+                      verticalOffset: 44.0,
+                      child: FadeInAnimation(
+                        child: autocomplete[index],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ));

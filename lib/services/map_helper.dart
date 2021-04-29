@@ -13,6 +13,8 @@ import 'package:green_up/providers/chargepoints_provider.dart';
 import 'package:green_up/providers/transcations_provider.dart';
 import 'package:green_up/services/map_marker.dart';
 
+import 'anim_search_widget.dart';
+
 /// In here we are encapsulating all the logic required to get marker icons from url images
 /// and to show clusters using the [Fluster] package.
 class MapHelper {
@@ -221,6 +223,7 @@ class MapHelper {
   static AssetImage chargingGif = AssetImage(
     "assets/images/battery-charge.gif",
   );
+  static final keyAnimationSearch = GlobalKey<AnimSearchBarState>();
 
   // static Future<void> initMarkers() async {
   //   final List<MapMarker> markers = [];

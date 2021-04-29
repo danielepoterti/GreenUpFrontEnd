@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -103,7 +101,7 @@ class TransactionCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
-              "Ricarica #"+data.id,
+              "Codice ricarica #"+data.id,
               softWrap: true,
               style: GoogleFonts.roboto(
                 fontSize: 15,
@@ -160,60 +158,3 @@ class TransactionCard extends StatelessWidget {
   }
 }
 
-class AutoRefresh extends StatefulWidget {
-  final Duration duration;
-  final Widget child;
-
-  AutoRefresh({
-    Key key,
-    @required this.duration,
-    @required this.child,
-  }) : super(key: key);
-
-  @override
-  _AutoRefreshState createState() => _AutoRefreshState();
-}
-
-class _AutoRefreshState extends State<AutoRefresh> {
-  int keyValue;
-  ValueKey key;
-
-  Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-
-    keyValue = 0;
-    key = ValueKey(keyValue);
-
-    _recursiveBuild();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      key: key,
-      child: widget.child,
-    );
-  }
-
-  void _recursiveBuild() {
-    _timer = Timer(
-      widget.duration,
-      () {
-        setState(() {
-          keyValue = keyValue + 1;
-          key = ValueKey(keyValue);
-          _recursiveBuild();
-        });
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_up/services/map_helper.dart';
 import '../services/anim_search_widget.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,7 @@ class Search extends StatefulWidget {
   String query = '';
   Function callback;
   Function prefixTap;
+  Function suffixTap;
   Search({this.callback, this.prefixTap, this.width});
   @override
   _SearchState createState() => _SearchState(callback, prefixTap);
@@ -41,6 +43,7 @@ class _SearchState extends State<Search> {
     return Container(
         margin: EdgeInsets.only(top: 30),
         child: AnimSearchBar(
+          key: MapHelper.keyAnimationSearch,
           width: widget.width,
           textController: textController,
           suffixIcon: Icon(Icons.search),
