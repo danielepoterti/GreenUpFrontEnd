@@ -11,11 +11,14 @@ class Transactions with ChangeNotifier {
 
   initTransactions(BuildContext context) async {
     /*FirebaseAuth.instance.currentUser.uid;*/
+    final User user =  FirebaseAuth.instance.currentUser;
+    
+    print(user);
     HttpsCallable callable =
         FirebaseFunctions.instance.httpsCallable('OCPPTagTransactions');
     try {
       await callable.call(<String, String>{
-        'tag': "tag_1_ocpp" /*FirebaseAuth.instance.currentUser.uid*/,
+        'tag': user.uid /*FirebaseAuth.instance.currentUser.uid*/,
         'period': "ALL"
       }).then((value) {
         final List<Transaction> loadedTransactions = [];
@@ -33,7 +36,8 @@ class Transactions with ChangeNotifier {
          );
          
        });
-       _transactions = loadedTransactions;
+       loadedTransactions.sort((a,b) => a.id.compareTo(b.id));
+       _transactions = loadedTransactions.reversed.toList();
       });
       notifyListeners();
     } catch (e) {

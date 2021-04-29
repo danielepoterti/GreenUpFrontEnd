@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
@@ -18,9 +20,10 @@ class _TransactionState extends State<Transaction>
   GifController controllerGif;
   RoundedLoadingButtonController btnController;
   String statusText = "Inizializzazione ricarica...";
-
+  String textPercentage = "";
   @override
   void initState() {
+    
     controllerGif = GifController(vsync: this);
     btnController = RoundedLoadingButtonController();
     controllerGif.value = 122;
@@ -35,6 +38,7 @@ class _TransactionState extends State<Transaction>
   }
 
   void stopTransaction() async {
+    final User user = FirebaseAuth.instance.currentUser;
     setState(() {
       statusText = "Terminazione ricarica in corso...";
     });
@@ -42,7 +46,8 @@ class _TransactionState extends State<Transaction>
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('stopTransaction');
       await callable
-          .call(<String, String>{'chargebox_id': 'due'}).then((value) {
+          .call(<String, String>{'chargebox_id': 'due', 'tag': user.uid}).then(
+              (value) {
         print(value.data);
         if (value.data != "FATAL") {
           setState(() {
@@ -58,6 +63,7 @@ class _TransactionState extends State<Transaction>
           Navigator.pop(context);
         }
       });
+      await MapHelper.dataTransactions.initTransactions(context);
     } on FirebaseFunctionsException catch (e) {
       print(e);
       print(e.code);
@@ -67,11 +73,13 @@ class _TransactionState extends State<Transaction>
   }
 
   void startTransaction() async {
+    final User user = FirebaseAuth.instance.currentUser;
     try {
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('startTransaction');
       await callable
-          .call(<String, String>{'chargebox_id': 'due'}).then((value) {
+          .call(<String, String>{'chargebox_id': 'due', 'tag': user.uid}).then(
+              (value) {
         print(value.data);
         if (value.data != "FATAL") {
           setState(() {
@@ -102,6 +110,20 @@ class _TransactionState extends State<Transaction>
 
   @override
   Widget build(BuildContext context) {
+    
+    FirebaseFirestore.instance
+        .collection('chargingPercentage')
+        .doc('due')
+        .snapshots()
+        .listen((document) {
+      
+      if(document['percentage'].toString() != textPercentage)
+      print("SNAPSHOT-------------------------------------");
+      print(document['percentage'].toString());
+      setState(() {
+        textPercentage = document['percentage'].toString();
+      });
+    });
     return WillPopScope(
       onWillPop: () async {
         final value = await showDialog<bool>(
@@ -157,11 +179,26 @@ class _TransactionState extends State<Transaction>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      statusText,
-                      style: GoogleFonts.roboto(
-                          fontSize: 30, fontWeight: FontWeight.w500),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          statusText,
+                          style: GoogleFonts.roboto(
+                              fontSize: 30, fontWeight: FontWeight.w500),
+                        ),
+                      ),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          textPercentage,
+                          style: GoogleFonts.roboto(
+                              fontSize: 30, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
