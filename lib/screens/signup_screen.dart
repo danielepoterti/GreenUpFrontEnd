@@ -25,7 +25,6 @@ class _SignUp extends State<SignUp> {
   _SignUp(this.storage, this.getLogin);
 
   void register() async {
-    print('here');
     bool isGood = true;
     try {
       UserCredential userCredential = await FirebaseAuth.instance
@@ -76,6 +75,7 @@ class _SignUp extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           elevation: 0,
           title: Text('SignUp'),

@@ -27,7 +27,6 @@ class MapScreenState extends State<MapScreen>
   //TODO: fix duplicated variables
 
   final keySnaplist = GlobalKey<ScrollSnapListState>();
-  
 
   bool autocompleteVisible = false;
   List<Widget> autocomplete;
@@ -82,7 +81,6 @@ class MapScreenState extends State<MapScreen>
     setState(() {
       autocompleteVisible = false;
     });
-
   }
 
   List getAutocomplete(List list) {
@@ -91,16 +89,37 @@ class MapScreenState extends State<MapScreen>
       appoggio.add(SizedBox(
         height: 7,
       ));
+      Widget icona;
+      if (element['properties']['type'] == 'street') {
+        icona = Icon(
+          Icons.traffic,
+          size: 30,
+        );
+      } else if (element['properties']['type'] == 'locality') {
+        icona = Icon(Icons.place, size: 30);
+      } else {
+        icona = Icon(Icons.home_work, size: 30);
+      }
       appoggio.add(InkWell(
           onTap: () => {handleAutocompleteClick(element)},
           child: Container(
-            height: 40,
-            width: 500,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(4))),
-            child: Center(child: Text(element['properties']['name'])),
-          )));
+              height: 40,
+              width: MediaQuery.of(context).size.width - 40,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  icona,
+                  SizedBox(
+                    width: 30,
+                  ),
+                  Center(child: Text(element['properties']['name'])),
+                ],
+              ))));
     });
     setState(() {
       autocompleteVisible = true;
@@ -111,32 +130,30 @@ class MapScreenState extends State<MapScreen>
   Widget _autocomplete() {
     if (autocompleteVisible) {
       return (Container(
-        width: 300,
+        width: MediaQuery.of(context).size.width - 40,
         child: MediaQuery.removePadding(
           removeBottom: true,
           context: context,
-          child: SafeArea(
-            child: AnimationLimiter(
-              child: ListView.builder(
-                itemCount: autocomplete.length,
-                padding: EdgeInsets.all(0),
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                //children: autocomplete,
-                itemBuilder: (context, index) {
-                  return AnimationConfiguration.staggeredList(
-                    //key: keyListPlace,
-                    duration: const Duration(milliseconds: 375),
-                    position: index,
-                    child: SlideAnimation(
-                      verticalOffset: 44.0,
-                      child: FadeInAnimation(
-                        child: autocomplete[index],
-                      ),
+          child: AnimationLimiter(
+            child: ListView.builder(
+              itemCount: autocomplete.length,
+              padding: EdgeInsets.all(0),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              //children: autocomplete,
+              itemBuilder: (context, index) {
+                return AnimationConfiguration.staggeredList(
+                  //key: keyListPlace,
+                  duration: const Duration(milliseconds: 375),
+                  position: index,
+                  child: SlideAnimation(
+                    verticalOffset: 44.0,
+                    child: FadeInAnimation(
+                      child: autocomplete[index],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -444,21 +461,19 @@ class MapScreenState extends State<MapScreen>
         ),
         Column(
           children: [
-            Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Search(
-                        callback: getAutocomplete,
-                        prefixTap: handlePrefix,
-                        width: MediaQuery.of(context).size.width - 40,
-                      ),
-                    ],
+            Container(
+              margin: EdgeInsets.only(left: 20, top: 20, right: 20),
+              child: Row(
+                children: [
+                  Search(
+                    location: LatLng(
+                        widget.snapshot.latitude, widget.snapshot.longitude),
+                    callback: getAutocomplete,
+                    prefixTap: handlePrefix,
+                    width: MediaQuery.of(context).size.width - 40,
                   ),
-                )
-              ],
+                ],
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
