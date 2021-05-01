@@ -23,7 +23,6 @@ class _TransactionState extends State<Transaction>
   String textPercentage = "";
   @override
   void initState() {
-    
     controllerGif = GifController(vsync: this);
     btnController = RoundedLoadingButtonController();
     controllerGif.value = 122;
@@ -110,19 +109,31 @@ class _TransactionState extends State<Transaction>
 
   @override
   Widget build(BuildContext context) {
-    
+    bool isInit = true;
+    bool isSecondInit = true;
+    String initString = "";
+
     FirebaseFirestore.instance
         .collection('chargingPercentage')
         .doc('due')
         .snapshots()
         .listen((document) {
-      
-      if(document['percentage'].toString() != textPercentage)
-      print("SNAPSHOT-------------------------------------");
-      print(document['percentage'].toString());
-      setState(() {
-        textPercentage = document['percentage'].toString();
-      });
+      if (isInit) {
+        isInit = false;
+        initString = document['percentage'].toString();
+      } else {
+        if (initString != document['percentage'].toString() && isSecondInit) {
+          isSecondInit = false;
+          setState(() {
+            textPercentage = document['percentage'].toString()+" %";
+          });
+        } else if (document['percentage'].toString() != textPercentage)
+          //print("SNAPSHOT-------------------------------------");
+          //print(document['percentage'].toString());
+          setState(() {
+            textPercentage = document['percentage'].toString()+" %";
+          });
+      }
     });
     return WillPopScope(
       onWillPop: () async {
@@ -174,7 +185,9 @@ class _TransactionState extends State<Transaction>
             Container(
               child: Padding(
                 padding: EdgeInsets.only(
-                    left: 30, bottom: MediaQuery.of(context).size.height / 2),
+                    left: 30,
+                    right: 30,
+                    bottom: MediaQuery.of(context).size.height / 2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -195,7 +208,7 @@ class _TransactionState extends State<Transaction>
                         Text(
                           textPercentage,
                           style: GoogleFonts.roboto(
-                              fontSize: 30, fontWeight: FontWeight.w500),
+                              fontSize: 30, fontWeight: FontWeight.w300),
                         ),
                       ],
                     )
