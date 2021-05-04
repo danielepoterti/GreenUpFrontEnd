@@ -50,6 +50,7 @@ dependencies:
   flutter_gifimage: ^1.0.1
   rounded_loading_button: ^1.0.18
   cloud_firestore: ^1.0.7
+  progress_indicator: ^0.2.0
 
 dev_dependencies:
   flutter_test:

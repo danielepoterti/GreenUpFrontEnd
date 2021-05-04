@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -86,10 +85,17 @@ class MapScreenState extends State<MapScreen>
   List getAutocomplete(List list) {
     List<Widget> appoggio = [];
     list.forEach((element) {
+      print('---------------------------------------------------------------');
+      print(element);
       appoggio.add(SizedBox(
         height: 7,
       ));
       Widget icona;
+      String textPlace = element['properties']['city'] == null
+          ? element['properties']['name']
+          : element['properties']['name'] +
+              " - " +
+              element['properties']['city'];
       if (element['properties']['type'] == 'street') {
         icona = Icon(
           Icons.traffic,
@@ -117,7 +123,7 @@ class MapScreenState extends State<MapScreen>
                   SizedBox(
                     width: 30,
                   ),
-                  Center(child: Text(element['properties']['name'])),
+                  Center(child: Text(textPlace)),
                 ],
               ))));
     });
@@ -204,7 +210,7 @@ class MapScreenState extends State<MapScreen>
               MapHelper.isChargePointPressed = true;
             }));
     MapHelper.controllerChargePointCard.forward();
-    print('MARKER PRESSED');
+    //print('MARKER PRESSED');
   }
 
   void handlerChangeFocusChargePointList(double long, double lat) async {
@@ -390,9 +396,10 @@ class MapScreenState extends State<MapScreen>
       await MapHelper.dataChargePoints
           .initChargers(context)
           .then((_) => _initMarkers());
-      print("sos");
       await MapHelper.dataTransactions.initTransactions(context);
-      fetchGif(MapHelper.chargingGif);
+      print(
+          "_______________________________________________________________________________________________");
+      print(MapHelper.dataTransactions.transactions);
     }
     super.didChangeDependencies();
   }
