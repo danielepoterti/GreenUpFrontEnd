@@ -98,7 +98,7 @@ class _LoginState extends State<Login> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                      height: 600,
+                      height: MediaQuery.of(context).size.height-240,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                           color: Colors.white,
