@@ -9,46 +9,35 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.center,
-      child: Container(
-        alignment: Alignment.topCenter,
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            Icon(
-              Icons.account_circle,
-              size: 70,
+      alignment: Alignment.bottomCenter,
+      child: Stack(
+        children: [
+          Container(
+            color: const Color(0xff44a688),
+            height: MediaQuery.of(context).size.height,
+          ),
+          Positioned(
+              child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30))),
+              height: MediaQuery.of(context).size.height - 200,
             ),
-            Center(
-              child: Text(
-                'Miche-lino Banfi',
-                style: TextStyle(fontSize: 30),
-              ),
+          )),
+          Positioned(
+            top: 125,
+            left: (MediaQuery.of(context).size.width / 2) - 75,
+            child: Image.asset(
+              'assets/images/github.png',
+              width: 150,
+              height: 150,
             ),
-            SizedBox(
-              height: 40,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text(
-                'Impostazioni',
-                style: TextStyle(fontSize: 25),
-              ),
-            ),
-            ElevatedButton(
-              child: Text('Privacy'),
-              onPressed: null,
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.red)),
-            ),
-          ],
-        ),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20))),
-        width: 350,
-        height: 500,
+          ),
+        ],
       ),
     );
   }
