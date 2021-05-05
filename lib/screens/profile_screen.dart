@@ -8,7 +8,8 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+        child: Container(
       alignment: Alignment.bottomCenter,
       child: Stack(
         children: [
@@ -17,28 +18,125 @@ class _ProfileState extends State<Profile> {
             height: MediaQuery.of(context).size.height,
           ),
           Positioned(
-              child: Align(
-            alignment: Alignment.bottomCenter,
+            top: 200,
             child: Container(
+              height: 800,
+              width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30))),
-              height: MediaQuery.of(context).size.height - 200,
-            ),
-          )),
-          Positioned(
-            top: 125,
-            left: (MediaQuery.of(context).size.width / 2) - 75,
-            child: Image.asset(
-              'assets/images/github.png',
-              width: 150,
-              height: 150,
             ),
           ),
+          Positioned(
+              top: 125,
+              left: (MediaQuery.of(context).size.width / 2) - 75,
+              child: Container(
+                height: 150,
+                width: 150,
+                decoration:
+                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+              )),
+          Positioned(
+              top: 130,
+              left: (MediaQuery.of(context).size.width / 2) - 70,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image.asset(
+                  'assets/images/skri.jpg',
+                  width: 140,
+                  height: 140,
+                ),
+              )),
+          Positioned(
+            top: 300,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'INFORMAZIONI',
+                    style: TextStyle(
+                        color: const Color(0xff44a688),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Row(children: [
+                    Icon(
+                      Icons.person_rounded,
+                      size: 20,
+                    ),
+                    Text('Michele Banfi', style: TextStyle(fontSize: 20))
+                  ]),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.call,
+                        size: 20,
+                      ),
+                      Text(
+                        '3388306095',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.email,
+                          size: 20,
+                        ),
+                        Text(
+                          'michi.banfi01@gmail.com',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        )
+                      ],
+                    )),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'MACCHINE',
+                    style: TextStyle(
+                        color: const Color(0xff44a688),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          )
         ],
       ),
-    );
+    ));
   }
 }
