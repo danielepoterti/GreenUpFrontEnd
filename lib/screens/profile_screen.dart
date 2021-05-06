@@ -8,8 +8,10 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Container(
+    return Scaffold(
+        body: SingleChildScrollView(
+            //physics: PageScrollPhysics(),
+            child: Container(
       alignment: Alignment.bottomCenter,
       child: Stack(
         children: [
@@ -132,11 +134,130 @@ class _ProfileState extends State<Profile> {
                 SizedBox(
                   height: 10,
                 ),
+                Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.directions_car,
+                          size: 20,
+                        ),
+                        Text(
+                          '<PICKER>',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        )
+                      ],
+                    )),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'DATI PERSONALI',
+                    style: TextStyle(
+                        color: const Color(0xff44a688),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.person,
+                          size: 20,
+                        ),
+                        Text(
+                          'Modifica i dati personali',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        )
+                      ],
+                    )),
+                Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.monetization_on,
+                          size: 20,
+                        ),
+                        Text(
+                          'Modifica i dati di fatturazione',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        )
+                      ],
+                    )),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'DATI PERSONALI',
+                    style: TextStyle(
+                        color: const Color(0xff44a688),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'DATI PERSONALI',
+                    style: TextStyle(
+                        color: const Color(0xff44a688),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'DATI PERSONALI',
+                    style: TextStyle(
+                        color: const Color(0xff44a688),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'DATI PERSONALI',
+                    style: TextStyle(
+                        color: const Color(0xff44a688),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
               ],
             ),
           )
         ],
       ),
-    ));
+    )));
   }
 }
