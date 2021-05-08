@@ -311,6 +311,17 @@ class MapScreenState extends State<MapScreen>
             ),
           ),
           Positioned(
+            top: 10.5,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Text(
+                MapHelper.nearbyChargePoints[index].id,
+                style: GoogleFonts.roboto(
+                    fontSize: 10, fontWeight: FontWeight.w200),
+              ),
+            ),
+          ),
+          Positioned(
             //top: 35,
             child: Padding(
               padding: const EdgeInsets.only(left: 20.0, top: 40, right: 20.0),

@@ -27,14 +27,6 @@ class LoadingButtonState extends State<LoadingButton>
     });
   }
 
-  // void startTransaction() async {
-  //   HttpsCallable callable =
-  //       FirebaseFunctions.instance.httpsCallable('startTransaction');
-  //   final results = await callable.call(<String, String>{'chargebox_id': 'due'});
-  //   var fruit = results.data;
-  //   print(fruit);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

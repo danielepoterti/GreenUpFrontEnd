@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -89,43 +90,50 @@ class ChargePoints with ChangeNotifier {
   }
 
   initChargers(BuildContext context) async {
-    final url = Uri.https(
-      'michelebanfi.github.io',
-      'data/data.geojson',
-    );
+    HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('getChargingStations');
+    final results = await callable();
+    print(
+        "AOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+    print(results.data.runtimeType);
 
-    // final json =
-    //     await DefaultAssetBundle.of(context).loadString("assets/data.json");
-    // Map positionMap = jsonDecode(json);
+    final Map resultsMap = json.decode(results.data);
 
-    try {
-      final response = await http.get(url);
-      final positionMap = json.decode(response.body);
-      final List<ChargePoint> loadedChargers = [];
+    print(resultsMap);
+    print(resultsMap["1"]["longitudine"]);
+    print(resultsMap["1"]["longitudine"].runtimeType);
+    print(double.parse(resultsMap["1"]["longitudine"]));
 
-      positionMap['features'].forEach((element) {
-        return loadedChargers.add(
-          ChargePoint(
-            owner: element['properties']['titolare'].toString(),
-            id: element['properties']['id'].toString(),
-            address: Address(
-                city: "Milano",
-                street: element['properties']['localita'].toString()),
-            status: Status.available,
-            plug: null,
-            maxPower: null,
-            powerType: element['properties']['tipo_ricar'].toString(),
-            cost: null,
-            position: LatLng(element['geometry']['coordinates'][0][1],
-                element['geometry']['coordinates'][0][0]),
+    final List<ChargePoint> loadedChargers = [];
+
+    resultsMap.forEach((key, element) {
+      print(element["id"]);
+      print(element["longitudine"]);
+
+     return element["longitudine"] == null ? null:
+       loadedChargers.add(
+        ChargePoint(
+          owner: element["titolare"].toString(),
+          id: element["id"].toString(),
+          address: Address(
+            city: element["citta"],
+            street: element["via"],
           ),
-        );
-      });
-      _chargePoints = loadedChargers;
-      notifyListeners();
-    } catch (e) {
-      print(e);
-    }
+          //TODO: check status
+          status: Status.available,
+          plug: null,
+          maxPower: null,
+          powerType: element["tipo_ricar"].toString(),
+          cost: null,
+          position: LatLng(
+            double.parse(element["latitudine"]),
+            double.parse(element["longitudine"]),
+          ),
+        ),
+      );
+    });
+    _chargePoints = loadedChargers;
+    notifyListeners();
   }
 
   initIcons() async {

@@ -45,7 +45,7 @@ class _TransactionState extends State<Transaction>
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('stopTransaction');
       await callable
-          .call(<String, String>{'chargebox_id': 'due', 'tag': user.uid}).then(
+          .call(<String, String>{'chargebox_id': MapHelper.selectedForTransaction.id, 'tag': user.uid}).then(
               (value) {
         print(value.data);
         if (value.data != "FATAL") {
@@ -77,7 +77,7 @@ class _TransactionState extends State<Transaction>
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('startTransaction');
       await callable
-          .call(<String, String>{'chargebox_id': 'due', 'tag': user.uid}).then(
+          .call(<String, String>{'chargebox_id': MapHelper.selectedForTransaction.id, 'tag': user.uid}).then(
               (value) {
         print(value.data);
         if (value.data != "FATAL") {
@@ -115,7 +115,7 @@ class _TransactionState extends State<Transaction>
 
     FirebaseFirestore.instance
         .collection('chargingPercentage')
-        .doc('due')
+        .doc(MapHelper.selectedForTransaction.id)
         .snapshots()
         .listen((document) {
       if (isInit) {
@@ -176,12 +176,6 @@ class _TransactionState extends State<Transaction>
         backgroundColor: Colors.white,
         body: Stack(
           children: <Widget>[
-            // SizedBox(
-            //   child: GifImage(
-            //     controller: controllerGif,
-            //     image: MapHelper.chargingGif,
-            //   ),
-            // ),
             Container(
               child: Padding(
                 padding: EdgeInsets.only(
@@ -221,16 +215,6 @@ class _TransactionState extends State<Transaction>
                         ),
                       ),
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Text(
-                    //       textPercentage,
-                    //       style: GoogleFonts.roboto(
-                    //           fontSize: 30, fontWeight: FontWeight.w300),
-                    //     ),
-                    //   ],
-                    // )
                   ],
                 ),
               ),
