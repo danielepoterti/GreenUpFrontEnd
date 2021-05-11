@@ -72,120 +72,120 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        elevation: 0,
-        title: Text('Login'),
-        backgroundColor: const Color(0xff44a688),
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: const Color(0xff44a688),
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Image.asset(
-                'assets/images/github.png',
-                width: 150,
-                height: 150,
-              ),
-              Container(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                      height: MediaQuery.of(context).size.height-240,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
+        //resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          elevation: 0,
+          title: Text('Login'),
+          backgroundColor: const Color(0xff44a688),
+        ),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: const Color(0xff44a688),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Column(
+                children: [
+                  Image.asset(
+                    'assets/images/github.png',
+                    width: 150,
+                    height: 150,
+                  ),
+                  Container(
+                    child: Align(
+                      //alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height - 150,
+                        decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(50),
-                        topRight: Radius.circular(50),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width - 100,
-                          child: TextField(
-                            controller: emailController,
-                            decoration: InputDecoration(
-                                labelText: 'Email',
-                                prefixIcon: Icon(Icons.person),
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(25))),
-                                hintText: 'Email'),
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50),
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width - 100,
-                          child: TextField(
-                            controller: passwordController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                                labelText: 'Password',
-                                prefixIcon: Icon(Icons.lock),
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(25))),
-                                hintText: 'Password'),
-                          ),
-                        ),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateColor.resolveWith(
-                                  (states) => const Color(0xff44a688)),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width - 100,
+                              child: TextField(
+                                controller: emailController,
+                                decoration: InputDecoration(
+                                    labelText: 'Email',
+                                    prefixIcon: Icon(Icons.person),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(25))),
+                                    hintText: 'Email'),
                               ),
                             ),
-                            onPressed: login,
-                            child: Text('Login')),
-                        SizedBox(
-                          height: 10,
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width - 100,
+                              child: TextField(
+                                controller: passwordController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    labelText: 'Password',
+                                    prefixIcon: Icon(Icons.lock),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(25))),
+                                    hintText: 'Password'),
+                              ),
+                            ),
+                            ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateColor.resolveWith(
+                                          (states) => const Color(0xff44a688)),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: login,
+                                child: Text('Login')),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'You dont have and account?',
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          SignUp(storage, getLogin))),
+                              child: Text('Sign Up',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      decoration: TextDecoration.underline)),
+                            )
+                            //ElevatedButton(onPressed: google, child: Text('Google')),
+                          ],
                         ),
-                        Text(
-                          'You dont have and account?',
-                          style: TextStyle(fontSize: 15),
-                        ),
-                        GestureDetector(
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      SignUp(storage, getLogin))),
-                          child: Text('Sign Up',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  decoration: TextDecoration.underline)),
-                        )
-                        //ElevatedButton(onPressed: google, child: Text('Google')),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

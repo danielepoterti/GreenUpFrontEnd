@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'screens/login_screen.dart';
 import 'wrapper.dart';
 import 'dart:convert';
@@ -101,7 +100,8 @@ class _MyApp extends State<MyApp> {
             if (snapshot.connectionState == ConnectionState.done) {
               print(snapshot.data[0]); //if login is null => login screen
               if (login != null) {
-                return MaterialApp(home: Wrapper(snapshot: snapshot.data[0]));
+                return MaterialApp(
+                    home: Wrapper(snapshot: snapshot.data[0], login: login));
               } else {
                 return MaterialApp(
                   home: Login(storage, getLogin),

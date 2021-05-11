@@ -17,6 +17,10 @@ class SignUp extends StatefulWidget {
 class _SignUp extends State<SignUp> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final numberController = TextEditingController();
+  final nameController = TextEditingController();
+  final surnameController = TextEditingController();
+
   final Function getLogin;
 
   final FlutterSecureStorage storage;
@@ -44,7 +48,7 @@ class _SignUp extends State<SignUp> {
     //succesfully registered
     if (isGood) {
       String data =
-          '{\"mail\": \"${emailController.text}\", \"psw\": \"${passwordController.text}\"}';
+          '{\"mail\": \"${emailController.text}\", \"psw\": \"${passwordController.text}\", \"phone\": \"${numberController.text}\", \"name\": \"${nameController.text}\", \"surname\": \"${surnameController.text}\"}';
       await storage.write(key: 'login', value: data);
       this.getLogin(data);
     }
@@ -75,7 +79,6 @@ class _SignUp extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           elevation: 0,
           title: Text('SignUp'),
@@ -85,96 +88,151 @@ class _SignUp extends State<SignUp> {
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        body: Container(
-            height: double.infinity,
-            width: double.infinity,
-            color: const Color(0xff44a688),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  Image.asset(
-                    'assets/images/github.png',
-                    width: 150,
-                    height: 150,
-                  ),
-                  Container(
-                    child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height-240,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(50),
-                                  topRight: Radius.circular(50))),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width - 100,
-                                child: TextField(
-                                  controller: emailController,
-                                  decoration: InputDecoration(
-                                      labelText: 'Email',
-                                      prefixIcon: Icon(Icons.person),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(25))),
-                                      hintText: 'Email'),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+              height: MediaQuery.of(context).size.height,
+              color: const Color(0xff44a688),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  children: [
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
+                    Image.asset(
+                      'assets/images/github.png',
+                      width: 150,
+                      height: 150,
+                    ),
+                    Container(
+                      child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height - 150,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(50),
+                                    topRight: Radius.circular(50))),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20,
                                 ),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width - 100,
-                                child: TextField(
-                                  controller: passwordController,
-                                  obscureText: true,
-                                  decoration: InputDecoration(
-                                      labelText: 'Password',
-                                      prefixIcon: Icon(Icons.lock),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(25))),
-                                      hintText: 'Password'),
+                                SizedBox(
+                                  height: 20,
                                 ),
-                              ),
-                              ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateColor.resolveWith(
-                                              (states) =>
-                                                  const Color(0xff44a688)),
-                                      shape: MaterialStateProperty.all(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(18)))),
-                                  onPressed: register,
-                                  child: Text('SingUp')),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              //ElevatedButton(onPressed: google, child: Text('Google')),
-                            ],
-                          ),
-                        )),
-                  )
-                ],
-              ),
-            )));
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: TextField(
+                                    controller: emailController,
+                                    decoration: InputDecoration(
+                                        labelText: 'Email',
+                                        prefixIcon: Icon(Icons.person),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(25))),
+                                        hintText: 'Email'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: TextField(
+                                    controller: passwordController,
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                        labelText: 'Password',
+                                        prefixIcon: Icon(Icons.lock),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(25))),
+                                        hintText: 'Password'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: TextField(
+                                    controller: nameController,
+                                    decoration: InputDecoration(
+                                        labelText: 'Name',
+                                        prefixIcon: Icon(Icons.person),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(25))),
+                                        hintText: 'Name'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: TextField(
+                                    controller: surnameController,
+                                    decoration: InputDecoration(
+                                        labelText: 'Surname',
+                                        prefixIcon: Icon(Icons.person),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(25))),
+                                        hintText: 'Surname'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: TextField(
+                                    controller: numberController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                        labelText: 'Phone',
+                                        prefixIcon: Icon(Icons.call),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(25))),
+                                        hintText: 'Phone number'),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateColor.resolveWith(
+                                                (states) =>
+                                                    const Color(0xff44a688)),
+                                        shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        18)))),
+                                    onPressed: register,
+                                    child: Text('SingUp')),
+                                SizedBox(
+                                  height: 10,
+                                ),
+
+                                //ElevatedButton(onPressed: google, child: Text('Google')),
+                              ],
+                            ),
+                          )),
+                    )
+                  ],
+                ),
+              )),
+        ));
   }
 }

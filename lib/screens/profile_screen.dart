@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class Profile extends StatefulWidget {
+  String value;
+  Profile(this.value);
   @override
-  _ProfileState createState() => _ProfileState();
+  _ProfileState createState() => _ProfileState(value);
 }
 
 class _ProfileState extends State<Profile> {
+  String a;
+  dynamic dati;
+  @override
+  _ProfileState(String a) {
+    dati = json.decode(a);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +87,8 @@ class _ProfileState extends State<Profile> {
                           Icons.person_rounded,
                           size: 20,
                         ),
-                        Text('Michele Banfi', style: TextStyle(fontSize: 20))
+                        Text("${dati['name']} ${dati['surname']}",
+                            style: TextStyle(fontSize: 20))
                       ]),
                     ),
                     SizedBox(
@@ -92,7 +103,7 @@ class _ProfileState extends State<Profile> {
                             size: 20,
                           ),
                           Text(
-                            '3388306095',
+                            '${dati['phone']}',
                             style: TextStyle(
                               fontSize: 20,
                             ),
@@ -112,7 +123,7 @@ class _ProfileState extends State<Profile> {
                               size: 20,
                             ),
                             Text(
-                              'michi.banfi01@gmail.com',
+                              '${dati['mail']}',
                               style: TextStyle(
                                 fontSize: 20,
                               ),
@@ -199,58 +210,6 @@ class _ProfileState extends State<Profile> {
                             )
                           ],
                         )),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'DATI PERSONALI',
-                        style: TextStyle(
-                            color: const Color(0xff44a688),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'DATI PERSONALI',
-                        style: TextStyle(
-                            color: const Color(0xff44a688),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'DATI PERSONALI',
-                        style: TextStyle(
-                            color: const Color(0xff44a688),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'DATI PERSONALI',
-                        style: TextStyle(
-                            color: const Color(0xff44a688),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
                     SizedBox(
                       height: 10,
                     ),

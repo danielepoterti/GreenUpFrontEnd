@@ -11,7 +11,8 @@ GlobalKey<MapScreenState> globalKey = GlobalKey();
 
 class Wrapper extends StatefulWidget {
   Position snapshot;
-  Wrapper({@required this.snapshot});
+  String login;
+  Wrapper({@required this.snapshot, this.login});
   @override
   _WrapperState createState() => _WrapperState();
 }
@@ -135,7 +136,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
               color: Colors.white,
             ),
           ),
-          Profile(),
+          Profile(widget.login),
         ],
       ));
     }
