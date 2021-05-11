@@ -32,10 +32,39 @@ class MapScreenState extends State<MapScreen>
 
   bool isInit = true;
 
+  List<bool> isSelected = [true, false, false];
+
   void _initMarkers() async {
     final List<MapMarker> markers = [];
     markers.addAll(MapHelper.dataChargePoints.markers);
+    MapHelper.markersSelected.clear();
     MapHelper.markersSelected.addAll(MapHelper.dataChargePoints.markers);
+    MapHelper.clusterManager = await MapHelper.initClusterManager(
+      markers,
+      MapHelper.minClusterZoom,
+      MapHelper.maxClusterZoom,
+    );
+    await _updateMarkers();
+  }
+
+  void _onlyACMarkers() async {
+    final List<MapMarker> markers = [];
+    markers.addAll(MapHelper.dataChargePoints.markersAC);
+    MapHelper.markersSelected.clear();
+    MapHelper.markersSelected.addAll(MapHelper.dataChargePoints.markersAC);
+    MapHelper.clusterManager = await MapHelper.initClusterManager(
+      markers,
+      MapHelper.minClusterZoom,
+      MapHelper.maxClusterZoom,
+    );
+    await _updateMarkers();
+  }
+
+  void _onlyDCMarkers() async {
+    final List<MapMarker> markers = [];
+    markers.addAll(MapHelper.dataChargePoints.markersDC);
+    MapHelper.markersSelected.clear();
+    MapHelper.markersSelected.addAll(MapHelper.dataChargePoints.markersDC);
     MapHelper.clusterManager = await MapHelper.initClusterManager(
       markers,
       MapHelper.minClusterZoom,
@@ -408,9 +437,6 @@ class MapScreenState extends State<MapScreen>
           .initChargers(context)
           .then((_) => _initMarkers());
       await MapHelper.dataTransactions.initTransactions(context);
-      print(
-          "_______________________________________________________________________________________________");
-      print(MapHelper.dataTransactions.transactions);
     }
     super.didChangeDependencies();
   }
@@ -476,6 +502,70 @@ class MapScreenState extends State<MapScreen>
                   child: buildCurrentLocationButton(),
                 )
               : null,
+        ),
+        Positioned(
+          left: 20,
+          top: MediaQuery.of(context).size.height / 2,
+          child: Container(
+            padding: EdgeInsets.zero,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              //border: Border.all(color: Colors.black, width: 1.0),
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            child: ToggleButtons(
+              borderRadius: BorderRadius.circular(20),
+              borderColor: Colors.white,
+              selectedBorderColor: Colors.white,
+              fillColor: Colors.white,
+              //highlightColor: Colors.white,
+              selectedColor: const Color(0xff44a688),
+              direction: Axis.vertical,
+              children: <Widget>[
+                Text(
+                  "AC/DC",
+                  style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
+                ),
+                Text(
+                  "AC",
+                  style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
+                ),
+                Text(
+                  "DC",
+                  style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
+                ),
+              ],
+              onPressed: (int index) {
+                setState(() {
+                  for (int buttonIndex = 0;
+                      buttonIndex < isSelected.length;
+                      buttonIndex++) {
+                    if (buttonIndex == index) {
+                      isSelected[buttonIndex] = true;
+                    } else {
+                      isSelected[buttonIndex] = false;
+                    }
+                  }
+                  switch (index) {
+                    case 0:
+                      print("AC/DC");
+                      _initMarkers();
+                      break;
+                    case 1:
+                      print("AC");
+                      _onlyACMarkers();
+                      break;
+                    case 2:
+                      print("DC");
+                      _onlyDCMarkers();
+                      break;
+                    default:
+                  }
+                });
+              },
+              isSelected: isSelected,
+            ),
+          ),
         ),
         Column(
           children: [

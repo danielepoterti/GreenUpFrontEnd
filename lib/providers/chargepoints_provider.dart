@@ -93,16 +93,8 @@ class ChargePoints with ChangeNotifier {
     HttpsCallable callable =
         FirebaseFunctions.instance.httpsCallable('getChargingStations');
     final results = await callable();
-    print(
-        "AOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-    print(results.data.runtimeType);
 
     final Map resultsMap = json.decode(results.data);
-
-    print(resultsMap);
-    print(resultsMap["1"]["longitudine"]);
-    print(resultsMap["1"]["longitudine"].runtimeType);
-    print(double.parse(resultsMap["1"]["longitudine"]));
 
     final List<ChargePoint> loadedChargers = [];
 
@@ -110,27 +102,28 @@ class ChargePoints with ChangeNotifier {
       print(element["id"]);
       print(element["longitudine"]);
 
-     return element["longitudine"] == null ? null:
-       loadedChargers.add(
-        ChargePoint(
-          owner: element["titolare"].toString(),
-          id: element["id"].toString(),
-          address: Address(
-            city: element["citta"],
-            street: element["via"],
-          ),
-          //TODO: check status
-          status: Status.available,
-          plug: null,
-          maxPower: null,
-          powerType: element["tipo_ricar"].toString(),
-          cost: null,
-          position: LatLng(
-            double.parse(element["latitudine"]),
-            double.parse(element["longitudine"]),
-          ),
-        ),
-      );
+      return element["longitudine"] == null
+          ? null
+          : loadedChargers.add(
+              ChargePoint(
+                owner: element["titolare"].toString(),
+                id: element["id"].toString(),
+                address: Address(
+                  city: element["citta"],
+                  street: element["via"],
+                ),
+                //TODO: check status
+                status: Status.available,
+                plug: null,
+                maxPower: null,
+                powerType: element["tipo_ricar"].toString(),
+                cost: null,
+                position: LatLng(
+                  double.parse(element["latitudine"]),
+                  double.parse(element["longitudine"]),
+                ),
+              ),
+            );
     });
     _chargePoints = loadedChargers;
     notifyListeners();
@@ -159,6 +152,54 @@ class ChargePoints with ChangeNotifier {
                       : BitmapDescriptor.defaultMarker,
         ),
       );
+    });
+
+    return [...chargeMarkers];
+  }
+
+  List<MapMarker> get markersAC {
+    List<MapMarker> chargeMarkers = [];
+
+    _chargePoints.forEach((element) {
+      if (element.powerType.contains("AC")) {
+        chargeMarkers.add(
+          MapMarker(
+            id: element.id,
+            position: element.position,
+            icon: element.status == Status.available
+                ? _iconAvailable
+                : element.status == Status.unavailable
+                    ? _iconUnavailable
+                    : element.status == Status.occupied
+                        ? _iconOccupied
+                        : BitmapDescriptor.defaultMarker,
+          ),
+        );
+      }
+    });
+
+    return [...chargeMarkers];
+  }
+
+  List<MapMarker> get markersDC {
+    List<MapMarker> chargeMarkers = [];
+
+    _chargePoints.forEach((element) {
+      if (element.powerType.contains("DC")) {
+        chargeMarkers.add(
+          MapMarker(
+            id: element.id,
+            position: element.position,
+            icon: element.status == Status.available
+                ? _iconAvailable
+                : element.status == Status.unavailable
+                    ? _iconUnavailable
+                    : element.status == Status.occupied
+                        ? _iconOccupied
+                        : BitmapDescriptor.defaultMarker,
+          ),
+        );
+      }
     });
 
     return [...chargeMarkers];
