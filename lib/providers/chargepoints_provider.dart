@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_up/models/chargepoint_model.dart';
 import 'package:green_up/services/map_marker.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:ui' as ui;
-import 'dart:io' show Platform;
+
 
 class ChargePoints with ChangeNotifier {
   BitmapDescriptor _iconAvailable;
@@ -17,38 +17,7 @@ class ChargePoints with ChangeNotifier {
   BitmapDescriptor _iconUnavailable;
 
   List<ChargePoint> _chargePoints = [
-    // ChargePoint(
-    //   id: 'cp01',
-    //   address: Address(
-    //     city: 'Nova Milanese',
-    //     country: 'Italia',
-    //     houseNumber: '18',
-    //     street: 'Via Sarajevo',
-    //     zipCode: '20834',
-    //   ),
-    //   status: Status.available,
-    //   plug: PlugType.type2,
-    //   maxPower: PowerSupply.kW22,
-    //   powerType: PowerType.ac,
-    //   cost: 0,
-    //   position: const LatLng(45.594100, 9.192028),
-    // ),
-    // ChargePoint(
-    //   id: 'cp02',
-    //   address: Address(
-    //     city: 'Nova Milanese',
-    //     country: 'Italia',
-    //     houseNumber: '18',
-    //     street: 'Via Sarajevo',
-    //     zipCode: '20834',
-    //   ),
-    //   status: Status.available,
-    //   plug: PlugType.type2,
-    //   maxPower: PowerSupply.kW22,
-    //   powerType: PowerType.ac,
-    //   cost: 0,
-    //   position: const LatLng(45.59348806009438, 9.191465264449239),
-    // ),
+    
   ];
 
   List<ChargePoint> get chargePoints {
@@ -61,7 +30,7 @@ class ChargePoints with ChangeNotifier {
 
   Future<BitmapDescriptor> _setMarkerIcon(Status status) async {
     //apparentemente se si usano i byte le dimensioni non si buggano su iOS, tengo cosi per sicurezza
-    int width = Platform.isAndroid ? 128 : 128;
+    //int width = Platform.isAndroid ? 128 : 128;
     String path;
     switch (status) {
       case Status.available:
@@ -76,7 +45,7 @@ class ChargePoints with ChangeNotifier {
     }
 
     Uint8List byte = await getBytesFromAsset(path, 100);
-    return await BitmapDescriptor.fromBytes(byte);
+    return BitmapDescriptor.fromBytes(byte);
 
     // return await BitmapDescriptor.fromAssetImage(
     //     ImageConfiguration(),

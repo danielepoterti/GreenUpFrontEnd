@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
@@ -38,43 +39,34 @@ class _SignUp extends State<SignUp> {
       isGood = false;
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
+        Fluttertoast.showToast(
+          msg: "Password troppo debole",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          /*timeInSecForIosWeb: 1*/
+        );
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
+        Fluttertoast.showToast(
+          msg: "Email già in uso",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          /*timeInSecForIosWeb: 1*/
+        );
       }
     } catch (e) {
       isGood = false;
       print(e);
     }
     //succesfully registered
-    if (isGood) {
+    if (isGood) { 
       String data =
-          '{\"mail\": \"${emailController.text}\", \"psw\": \"${passwordController.text}\", \"phone\": \"${numberController.text}\", \"name\": \"${nameController.text}\", \"surname\": \"${surnameController.text}\"}';
+          '{\"mail\": \"${emailController.text}\", \"psw\": \"${passwordController.text}\"}';
       await storage.write(key: 'login', value: data);
       this.getLogin(data);
+      await FirebaseAuth.instance.currentUser.updateProfile(displayName: nameController.text +" "+ surnameController.text);
     }
   }
-
-  // void google() async {
-  //   print(await signInWithGoogle());
-  // }
-
-  // Future<UserCredential> signInWithGoogle() async {
-  //   // Trigger the authentication flow
-  //   final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
-
-  //   // Obtain the auth details from the request
-  //   final GoogleSignInAuthentication googleAuth =
-  //       await googleUser.authentication;
-
-  //   // Create a new credential
-  //   final GoogleAuthCredential credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth.accessToken,
-  //     idToken: googleAuth.idToken,
-  //   );
-
-  //   // Once signed in, return the UserCredential
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -190,37 +182,47 @@ class _SignUp extends State<SignUp> {
                                         hintText: 'Surname'),
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width - 100,
-                                  child: TextField(
-                                    controller: numberController,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                        labelText: 'Phone',
-                                        prefixIcon: Icon(Icons.call),
-                                        border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(25))),
-                                        hintText: 'Phone number'),
+                                // SizedBox(
+                                //   height: 20,
+                                // ),
+                                // Container(
+                                //   width:
+                                //       MediaQuery.of(context).size.width - 100,
+                                //   child: TextField(
+                                //     controller: numberController,
+                                //     keyboardType: TextInputType.number,
+                                //     decoration: InputDecoration(
+                                //         labelText: 'Phone',
+                                //         prefixIcon: Icon(Icons.call),
+                                //         border: OutlineInputBorder(
+                                //             borderRadius: BorderRadius.all(
+                                //                 Radius.circular(25))),
+                                //         hintText: 'Phone number'),
+                                //   ),
+                                // ),
+                                SizedBox(height: 20),
+                            SizedBox(
+                              height: 50,
+                              width:
+                                  (MediaQuery.of(context).size.width - 100) / 2,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateColor.resolveWith(
+                                          (states) => const Color(0xff44a688)),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    ),
                                   ),
                                 ),
-                                ElevatedButton(
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateColor.resolveWith(
-                                                (states) =>
-                                                    const Color(0xff44a688)),
-                                        shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        18)))),
-                                    onPressed: register,
-                                    child: Text('SingUp')),
+                                onPressed: register,
+                                child: Text(
+                                  'Sign Up',
+                                  style: TextStyle(fontSize: 17),
+                                ),
+                              ),
+                            ),
                                 SizedBox(
                                   height: 10,
                                 ),

@@ -1,18 +1,21 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-class Profile extends StatefulWidget {
+class ProfileScreen extends StatefulWidget {
   String value;
-  Profile(this.value);
+  ProfileScreen(this.value);
   @override
-  _ProfileState createState() => _ProfileState(value);
+  _ProfileScreenState createState() => _ProfileScreenState(value);
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileScreenState extends State<ProfileScreen> {
   String a;
   dynamic dati;
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
-  _ProfileState(String a) {
+  _ProfileScreenState(String a) {
     dati = json.decode(a);
   }
 
@@ -87,7 +90,7 @@ class _ProfileState extends State<Profile> {
                           Icons.person_rounded,
                           size: 20,
                         ),
-                        Text("${dati['name']} ${dati['surname']}",
+                        Text("${auth.currentUser.displayName}",
                             style: TextStyle(fontSize: 20))
                       ]),
                     ),

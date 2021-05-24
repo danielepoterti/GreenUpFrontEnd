@@ -11,7 +11,6 @@ import 'screens/login_screen.dart';
 import 'wrapper.dart';
 import 'dart:convert';
 
-FirebaseAuth auth = FirebaseAuth.instance;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
@@ -35,7 +34,7 @@ class _MyApp extends State<MyApp> {
   }
 
   void getLogin(String data) async {
-    //await storage.deleteAll();
+    await storage.deleteAll();
     if (data != null) {
       setState(() {
         login = data;
@@ -62,7 +61,7 @@ class _MyApp extends State<MyApp> {
     String psw = dati['psw'];
     bool isGood = true;
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
+      await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: mail, password: psw);
     } on FirebaseAuthException catch (e) {
       isGood = false;
@@ -92,6 +91,7 @@ class _MyApp extends State<MyApp> {
         )
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'GreenUp Demo',
         home: FutureBuilder(
           future:
@@ -109,7 +109,20 @@ class _MyApp extends State<MyApp> {
               }
             } else {
               //loading screen
-              return (Center());
+              return (SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(color: const Color(0xff44a688)),
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/github.png',
+                      width: 150,
+                      height: 150,
+                    ),
+                  ),
+                ),
+              ));
             }
           },
         ),

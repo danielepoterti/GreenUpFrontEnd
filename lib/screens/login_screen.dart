@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'signup_screen.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 
@@ -27,15 +28,26 @@ class _LoginState extends State<Login> {
   void login() async {
     bool isGood = true;
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
       isGood = false;
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
+        Fluttertoast.showToast(
+          msg: "Utente non trovato",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          /*timeInSecForIosWeb: 1*/
+        );
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
+        Fluttertoast.showToast(
+          msg: "Password non corretta",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          /*timeInSecForIosWeb: 1*/
+        );
       }
     }
     //successfully logged in
@@ -144,7 +156,12 @@ class _LoginState extends State<Login> {
                                     hintText: 'Password'),
                               ),
                             ),
-                            ElevatedButton(
+                            SizedBox(height: 20),
+                            SizedBox(
+                              height: 50,
+                              width:
+                                  (MediaQuery.of(context).size.width - 100) / 2,
+                              child: ElevatedButton(
                                 style: ButtonStyle(
                                   backgroundColor:
                                       MaterialStateColor.resolveWith(
@@ -156,9 +173,14 @@ class _LoginState extends State<Login> {
                                   ),
                                 ),
                                 onPressed: login,
-                                child: Text('Login')),
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(fontSize: 17),
+                                ),
+                              ),
+                            ),
                             SizedBox(
-                              height: 10,
+                              height: 20,
                             ),
                             Text(
                               'You dont have and account?',

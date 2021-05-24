@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import '../widgets/searchbar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class MapScreen extends StatefulWidget {
   dynamic snapshot;
@@ -102,9 +104,18 @@ class MapScreenState extends State<MapScreen>
     });
   }
 
-  void handleAutocompleteClick(element) {
-    MapHelper.handleMarkerClickCluster(element['geometry']['coordinates'][0],
-        element['geometry']['coordinates'][1]);
+  Future<void> handleAutocompleteClick(element) async {
+    String key = "AIzaSyCc-16mvBlbztZ44hjE2LJB1ZNvXbZrwGM";
+    String place_id = element["place_id"];
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?place_id=$place_id&key=$key');
+
+    final response = await http.get(url);
+
+    Map<String, dynamic> map = json.decode(response.body);
+    List<dynamic> data = map["results"];
+    Map location = data[0]["geometry"]["location"];
+    MapHelper.handleMarkerClickCluster(location["lng"], location["lat"]);
     MapHelper.keyAnimationSearch.currentState.onPressHandler();
     setState(() {
       autocompleteVisible = false;
@@ -119,22 +130,7 @@ class MapScreenState extends State<MapScreen>
       appoggio.add(SizedBox(
         height: 7,
       ));
-      Widget icona;
-      String textPlace = element['properties']['city'] == null
-          ? element['properties']['name']
-          : element['properties']['name'] +
-              " - " +
-              element['properties']['city'];
-      if (element['properties']['type'] == 'street') {
-        icona = Icon(
-          Icons.traffic,
-          size: 30,
-        );
-      } else if (element['properties']['type'] == 'locality') {
-        icona = Icon(Icons.place, size: 30);
-      } else {
-        icona = Icon(Icons.home_work, size: 30);
-      }
+      String textPlace = element['description'];
       appoggio.add(InkWell(
           onTap: () => {handleAutocompleteClick(element)},
           child: Container(
@@ -148,7 +144,6 @@ class MapScreenState extends State<MapScreen>
                   SizedBox(
                     width: 10,
                   ),
-                  icona,
                   SizedBox(
                     width: 30,
                   ),
@@ -450,6 +445,7 @@ class MapScreenState extends State<MapScreen>
   @override
   Widget build(BuildContext context) {
     var snapshot = widget.snapshot;
+    print("SNAPSHOT: "+ snapshot.toString());
     return Stack(
       children: [
         Scaffold(
@@ -475,9 +471,11 @@ class MapScreenState extends State<MapScreen>
                 MapHelper.controllerChargePointCard.reverse();
               }
             },
-            onMapCreated: (GoogleMapController controller) {
+            onMapCreated: (GoogleMapController controller) async {
               MapHelper.setMapstyle(controller);
               MapHelper.controllerMap = controller;
+              await MapHelper.controllerMap.moveCamera(CameraUpdate.zoomOut());
+
               try {
                 MapHelper.controllerCompleterMap.complete(controller);
               } catch (e) {
@@ -574,8 +572,6 @@ class MapScreenState extends State<MapScreen>
               child: Row(
                 children: [
                   Search(
-                    location: LatLng(
-                        widget.snapshot.latitude, widget.snapshot.longitude),
                     callback: getAutocomplete,
                     prefixTap: handlePrefix,
                     width: MediaQuery.of(context).size.width - 40,
@@ -612,14 +608,7 @@ class MapScreenState extends State<MapScreen>
                                   itemSize:
                                       (MediaQuery.of(context).size.width - 40) +
                                           10,
-                                  onItemFocus: (index)
-                                      // =>
-                                      //     handleMarkerClickMarker(
-                                      //         MapHelper.nearbyChargePoints[index]
-                                      //             .position.longitude,
-                                      //         MapHelper.nearbyChargePoints[index]
-                                      //             .position.latitude)
-                                      {
+                                  onItemFocus: (index) {
                                     handlerChangeFocusChargePointList(
                                         MapHelper.nearbyChargePoints[index]
                                             .position.longitude,

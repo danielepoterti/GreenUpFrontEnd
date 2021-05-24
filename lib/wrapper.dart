@@ -49,48 +49,6 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
     });
   }
 
-  List getAutocomplete(List list) {
-    autocompleteVisible = true;
-    List<Widget> appoggio = [];
-    list.forEach((element) {
-      appoggio.add(SizedBox(
-        height: 7,
-      ));
-      appoggio.add(InkWell(
-          onTap: () => {handleAutocompleteClick(element)},
-          child: Container(
-            height: 40,
-            width: 500,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(4))),
-            child: Center(child: Text(element['name'])),
-          )));
-    });
-    setState(() {
-      autocomplete = appoggio;
-    });
-  }
-
-  Widget _autocomplete() {
-    if (autocompleteVisible) {
-      return (Container(
-        width: 300,
-        child: MediaQuery.removePadding(
-          removeBottom: true,
-          context: context,
-          child: ListView(
-            padding: EdgeInsets.all(0),
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            children: autocomplete,
-          ),
-        ),
-      ));
-    } else {
-      return Container();
-    }
-  }
 
   Widget _router() {
     if (_page == 0) {
@@ -132,11 +90,9 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
           CircularRevealAnimation(
             animation: animation,
             centerAlignment: Alignment.bottomCenter,
-            child: Container(
-              color: Colors.white,
-            ),
+            child: ProfileScreen(widget.login),
           ),
-          Profile(widget.login),
+          
         ],
       ));
     }
@@ -180,16 +136,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
                 }
                 break;
             }
-            // print(
-            //     '===========================================================================');
-            // print(animationController.status);
-            // if (animationController.status == AnimationStatus.forward ||
-            //     animationController.status == AnimationStatus.completed) {
-            //   animationController.reverse();
-            // } else {
-            //   animationController.forward();
-            // }
-
+            
             setState(() {
               _page = index;
             });
