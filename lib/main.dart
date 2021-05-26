@@ -10,12 +10,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/login_screen.dart';
 import 'wrapper.dart';
 import 'dart:convert';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(MyApp());
+  runApp(Phoenix(
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -34,7 +37,7 @@ class _MyApp extends State<MyApp> {
   }
 
   void getLogin(String data) async {
-    await storage.deleteAll();
+    //await storage.deleteAll();
     if (data != null) {
       setState(() {
         login = data;
@@ -43,7 +46,7 @@ class _MyApp extends State<MyApp> {
       String value = await storage.read(key: 'login');
       bool validCredentials = await loginFromDisk(value);
       print(validCredentials);
-      if (validCredentials) {
+      if (validCredentials != null && validCredentials) {
         setState(() {
           login = value;
         });
@@ -56,23 +59,27 @@ class _MyApp extends State<MyApp> {
   }
 
   Future<bool> loginFromDisk(String data) async {
-    final dati = json.decode(data);
-    String mail = dati['mail'];
-    String psw = dati['psw'];
-    bool isGood = true;
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: mail, password: psw);
-    } on FirebaseAuthException catch (e) {
-      isGood = false;
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+      final dati = json.decode(data);
+      String mail = dati['mail'];
+      String psw = dati['psw'];
+      bool isGood = true;
+      try {
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: mail, password: psw);
+      } on FirebaseAuthException catch (e) {
+        isGood = false;
+        if (e.code == 'user-not-found') {
+          print('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          print('Wrong password provided for that user.');
+        }
       }
+      //successfully logged in
+      return isGood;
+    } catch (e) {
+      print(e);
     }
-    //successfully logged in
-    return isGood;
   }
 
   @override
@@ -101,7 +108,11 @@ class _MyApp extends State<MyApp> {
               print(snapshot.data[0]); //if login is null => login screen
               if (login != null) {
                 return MaterialApp(
-                    home: Wrapper(snapshot: snapshot.data[0], login: login));
+                    home: Wrapper(
+                  snapshot: snapshot.data[0],
+                  login: login,
+                  getLogin: getLogin,
+                ));
               } else {
                 return MaterialApp(
                   home: Login(storage, getLogin),

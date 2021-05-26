@@ -32,9 +32,8 @@ class _SignUp extends State<SignUp> {
   void register() async {
     bool isGood = true;
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text);
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
       isGood = false;
       if (e.code == 'weak-password') {
@@ -59,12 +58,13 @@ class _SignUp extends State<SignUp> {
       print(e);
     }
     //succesfully registered
-    if (isGood) { 
+    if (isGood) {
       String data =
           '{\"mail\": \"${emailController.text}\", \"psw\": \"${passwordController.text}\"}';
       await storage.write(key: 'login', value: data);
       this.getLogin(data);
-      await FirebaseAuth.instance.currentUser.updateProfile(displayName: nameController.text +" "+ surnameController.text);
+      await FirebaseAuth.instance.currentUser.updateProfile(
+          displayName: nameController.text + " " + surnameController.text);
     }
   }
 
@@ -201,28 +201,31 @@ class _SignUp extends State<SignUp> {
                                 //   ),
                                 // ),
                                 SizedBox(height: 20),
-                            SizedBox(
-                              height: 50,
-                              width:
-                                  (MediaQuery.of(context).size.width - 100) / 2,
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateColor.resolveWith(
-                                          (states) => const Color(0xff44a688)),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18),
+                                SizedBox(
+                                  height: 50,
+                                  width: (MediaQuery.of(context).size.width -
+                                          100) /
+                                      2,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateColor.resolveWith(
+                                              (states) =>
+                                                  const Color(0xff44a688)),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: register,
+                                    child: Text(
+                                      'Sign Up',
+                                      style: TextStyle(fontSize: 17),
                                     ),
                                   ),
                                 ),
-                                onPressed: register,
-                                child: Text(
-                                  'Sign Up',
-                                  style: TextStyle(fontSize: 17),
-                                ),
-                              ),
-                            ),
                                 SizedBox(
                                   height: 10,
                                 ),

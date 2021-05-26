@@ -5,25 +5,26 @@ import '../services/anim_search_widget.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class Search extends StatefulWidget {
+// ignore: must_be_immutable
+class SearchBar extends StatefulWidget {
   double width;
   String query = '';
   Function callback;
   Function prefixTap;
   Function suffixTap;
-  Search({
+  SearchBar({
     this.callback,
     this.prefixTap,
     this.width,
   });
   @override
-  _SearchState createState() => _SearchState(callback, prefixTap);
+  _SearchBarState createState() => _SearchBarState(callback, prefixTap);
 }
 
-class _SearchState extends State<Search> {
+class _SearchBarState extends State<SearchBar> {
   Function callback;
   Function prefixTap;
-  _SearchState(this.callback, this.prefixTap);
+  _SearchBarState(this.callback, this.prefixTap);
   TextEditingController textController = TextEditingController();
   @override
   void initState() {

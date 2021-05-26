@@ -17,7 +17,7 @@ class ChargePoints with ChangeNotifier {
   BitmapDescriptor _iconUnavailable;
 
   List<ChargePoint> _chargePoints = [
-    
+
   ];
 
   List<ChargePoint> get chargePoints {
@@ -65,7 +65,9 @@ class ChargePoints with ChangeNotifier {
 
     final Map resultsMap = json.decode(results.data);
 
-    final List<ChargePoint> loadedChargers = [];
+    final List<ChargePoint> loadedChargers = [
+      
+    ];
 
     resultsMap.forEach((key, element) {
       print(element["id"]);

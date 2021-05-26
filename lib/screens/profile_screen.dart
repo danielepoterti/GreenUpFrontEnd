@@ -1,16 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+// ignore: must_be_immutable
 class ProfileScreen extends StatefulWidget {
   String value;
-  ProfileScreen(this.value);
+  Function getLogin;
+  ProfileScreen(this.value, this.getLogin);
   @override
   _ProfileScreenState createState() => _ProfileScreenState(value);
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final storage = new FlutterSecureStorage();
   String a;
   dynamic dati;
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -136,89 +141,123 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(
                       height: 10,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'MACCHINE',
-                        style: TextStyle(
-                            color: const Color(0xff44a688),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
+                    // Padding(
+                    //   padding: EdgeInsets.only(left: 10),
+                    //   child: Text(
+                    //     'MACCHINE',
+                    //     style: TextStyle(
+                    //         color: const Color(0xff44a688),
+                    //         fontSize: 25,
+                    //         fontWeight: FontWeight.bold),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
+                    // Padding(
+                    //     padding: EdgeInsets.only(left: 20),
+                    //     child: Row(
+                    //       children: [
+                    //         Icon(
+                    //           Icons.directions_car,
+                    //           size: 20,
+                    //         ),
+                    //         Text(
+                    //           '<PICKER>',
+                    //           style: TextStyle(
+                    //             fontSize: 20,
+                    //           ),
+                    //         )
+                    //       ],
+                    //     )),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
+                    // Padding(
+                    //   padding: EdgeInsets.only(left: 10),
+                    //   child: Text(
+                    //     'DATI PERSONALI',
+                    //     style: TextStyle(
+                    //         color: const Color(0xff44a688),
+                    //         fontSize: 25,
+                    //         fontWeight: FontWeight.bold),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
+                    // Padding(
+                    //     padding: EdgeInsets.only(left: 20),
+                    //     child: Row(
+                    //       children: [
+                    //         Icon(
+                    //           Icons.person,
+                    //           size: 20,
+                    //         ),
+                    //         Text(
+                    //           'Modifica i dati personali',
+                    //           style: TextStyle(
+                    //             fontSize: 20,
+                    //           ),
+                    //         )
+                    //       ],
+                    //     )),
+                    // Padding(
+                    //     padding: EdgeInsets.only(left: 20),
+                    //     child: Row(
+                    //       children: [
+                    //         Icon(
+                    //           Icons.monetization_on,
+                    //           size: 20,
+                    //         ),
+                    //         Text(
+                    //           'Modifica i dati di fatturazione',
+                    //           style: TextStyle(
+                    //             fontSize: 20,
+                    //           ),
+                    //         )
+                    //       ],
+                    //     )),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).size.height/2 +10,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 50,
+                      width: (MediaQuery.of(context).size.width - 100) / 2,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateColor.resolveWith(
+                              (states) => const Color(0xff44a688)),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                        ),
+                        onPressed: () async {
+                          await storage.deleteAll();
+                          await auth.signOut();
+                          Phoenix.rebirth(context);
+                         // widget.getLogin(widget.value);
+                        },
+                        child: Text(
+                          'Log Off',
+                          style: TextStyle(fontSize: 17),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.directions_car,
-                              size: 20,
-                            ),
-                            Text(
-                              '<PICKER>',
-                              style: TextStyle(
-                                fontSize: 20,
-                              ),
-                            )
-                          ],
-                        )),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'DATI PERSONALI',
-                        style: TextStyle(
-                            color: const Color(0xff44a688),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.person,
-                              size: 20,
-                            ),
-                            Text(
-                              'Modifica i dati personali',
-                              style: TextStyle(
-                                fontSize: 20,
-                              ),
-                            )
-                          ],
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.monetization_on,
-                              size: 20,
-                            ),
-                            Text(
-                              'Modifica i dati di fatturazione',
-                              style: TextStyle(
-                                fontSize: 20,
-                              ),
-                            )
-                          ],
-                        )),
-                    SizedBox(
-                      height: 10,
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

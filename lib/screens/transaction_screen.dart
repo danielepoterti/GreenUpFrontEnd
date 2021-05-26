@@ -4,18 +4,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'package:progress_indicator/progress_indicator.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
-class Transaction extends StatefulWidget {
+class TransactionScreen extends StatefulWidget {
   @override
-  _TransactionState createState() => _TransactionState();
+  _TransactionScreenState createState() => _TransactionScreenState();
 }
 
-class _TransactionState extends State<Transaction>
+class _TransactionScreenState extends State<TransactionScreen>
     with SingleTickerProviderStateMixin {
   //GifController controllerGif;
   RoundedLoadingButtonController btnController;
@@ -44,9 +45,10 @@ class _TransactionState extends State<Transaction>
     try {
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('stopTransaction');
-      await callable
-          .call(<String, String>{'chargebox_id': MapHelper.selectedForTransaction.id, 'tag': user.uid}).then(
-              (value) {
+      await callable.call(<String, String>{
+        'chargebox_id': MapHelper.selectedForTransaction.id,
+        'tag': user.uid
+      }).then((value) {
         print(value.data);
         if (value.data != "FATAL") {
           setState(() {
@@ -59,7 +61,16 @@ class _TransactionState extends State<Transaction>
             Navigator.pop(context);
           });
         } else {
-          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: "ERRORE FATALE",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            /*timeInSecForIosWeb: 1*/
+          );
+
+          Future.delayed(const Duration(seconds: 2), () {
+            Navigator.pop(context);
+          });
         }
       });
       await MapHelper.dataTransactions.initTransactions(context);
@@ -76,9 +87,10 @@ class _TransactionState extends State<Transaction>
     try {
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('startTransaction');
-      await callable
-          .call(<String, String>{'chargebox_id': MapHelper.selectedForTransaction.id, 'tag': user.uid}).then(
-              (value) {
+      await callable.call(<String, String>{
+        'chargebox_id': MapHelper.selectedForTransaction.id,
+        'tag': user.uid
+      }).then((value) {
         print(value.data);
         if (value.data != "FATAL") {
           setState(() {
@@ -96,7 +108,16 @@ class _TransactionState extends State<Transaction>
             });
           });
         } else {
-          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: "ERRORE FATALE",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            /*timeInSecForIosWeb: 1*/
+          );
+
+          Future.delayed(const Duration(seconds: 2), () {
+            Navigator.pop(context);
+          });
         }
       });
     } on FirebaseFunctionsException catch (e) {
@@ -120,19 +141,19 @@ class _TransactionState extends State<Transaction>
         .listen((document) {
       if (isInit) {
         isInit = false;
-        initString = document['percentage']+0.0;
+        initString = document['percentage'] + 0.0;
       } else {
-        if (initString != document['percentage']+0.0 && isSecondInit) {
+        if (initString != document['percentage'] + 0.0 && isSecondInit) {
           isSecondInit = false;
           setState(() {
-            textPercentage = document['percentage']+0.0;
+            textPercentage = document['percentage'] + 0.0;
           });
-        } else if (document['percentage']+0.0 != textPercentage)
+        } else if (document['percentage'] + 0.0 != textPercentage)
           //print("SNAPSHOT-------------------------------------");
           print(document['percentage'].toString());
-          setState(() {
-            textPercentage = document['percentage']+0.0;
-          });
+        setState(() {
+          textPercentage = document['percentage'] + 0.0;
+        });
       }
     });
     return WillPopScope(
@@ -186,10 +207,13 @@ class _TransactionState extends State<Transaction>
                   percentage: textPercentage,
                   color: Colors.amber,
                   backColor: Colors.grey,
-                  gradient: LinearGradient(colors: [const Color(0xff327a65), Color(0xff44a688)]),
+                  gradient: LinearGradient(
+                      colors: [const Color(0xff327a65), Color(0xff44a688)]),
                   showPercentage: true,
-                  textStyle: GoogleFonts.roboto( color: Colors.black,
-                              fontSize: 60, fontWeight: FontWeight.w500),
+                  textStyle: GoogleFonts.roboto(
+                      color: Colors.black,
+                      fontSize: 60,
+                      fontWeight: FontWeight.w500),
                   stroke: 20,
                   round: true,
                 ),

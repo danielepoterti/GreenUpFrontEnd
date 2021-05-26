@@ -89,7 +89,7 @@ class LoadingButtonState extends State<LoadingButton>
 
   Route _createRoute() {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => Transaction(),
+      pageBuilder: (context, animation, secondaryAnimation) => TransactionScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = Offset(0.0, 1.0);
         var end = Offset.zero;

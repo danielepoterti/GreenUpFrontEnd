@@ -1,19 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
 import 'package:green_up/providers/transcations_provider.dart';
-import 'package:green_up/services/geolocator_service.dart';
 import 'package:green_up/services/map_helper.dart';
 import 'package:green_up/services/map_marker.dart';
-import 'package:green_up/widgets/circular_button.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import '../widgets/searchbar.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 class MapScreen extends StatefulWidget {
@@ -27,14 +23,7 @@ class MapScreenState extends State<MapScreen>
     with SingleTickerProviderStateMixin {
   //TODO: fix duplicated variables
 
-  final keySnaplist = GlobalKey<ScrollSnapListState>();
-
-  bool autocompleteVisible = false;
-  List<Widget> autocomplete;
-
   bool isInit = true;
-
-  List<bool> isSelected = [true, false, false];
 
   void _initMarkers() async {
     final List<MapMarker> markers = [];
@@ -106,9 +95,9 @@ class MapScreenState extends State<MapScreen>
 
   Future<void> handleAutocompleteClick(element) async {
     String key = "AIzaSyCc-16mvBlbztZ44hjE2LJB1ZNvXbZrwGM";
-    String place_id = element["place_id"];
+    String placeId = element["place_id"];
     final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/geocode/json?place_id=$place_id&key=$key');
+        'https://maps.googleapis.com/maps/api/geocode/json?place_id=$placeId&key=$key');
 
     final response = await http.get(url);
 
@@ -118,84 +107,51 @@ class MapScreenState extends State<MapScreen>
     MapHelper.handleMarkerClickCluster(location["lng"], location["lat"]);
     MapHelper.keyAnimationSearch.currentState.onPressHandler();
     setState(() {
-      autocompleteVisible = false;
+      MapHelper.autocompleteVisible = false;
     });
   }
 
-  List getAutocomplete(List list) {
+  void getAutocomplete(List list) {
     List<Widget> appoggio = [];
     list.forEach((element) {
-      print('---------------------------------------------------------------');
-      print(element);
       appoggio.add(SizedBox(
         height: 7,
       ));
       String textPlace = element['description'];
-      appoggio.add(InkWell(
+      appoggio.add(
+        InkWell(
           onTap: () => {handleAutocompleteClick(element)},
-          child: Container(
+          child: Flexible(
+            child: Container(
               height: 40,
               width: MediaQuery.of(context).size.width - 40,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  Center(child: Text(textPlace)),
-                ],
-              ))));
-    });
-    setState(() {
-      autocompleteVisible = true;
-      autocomplete = appoggio;
-    });
-  }
-
-  Widget _autocomplete() {
-    if (autocompleteVisible) {
-      return (Container(
-        width: MediaQuery.of(context).size.width - 40,
-        child: MediaQuery.removePadding(
-          removeBottom: true,
-          context: context,
-          child: AnimationLimiter(
-            child: ListView.builder(
-              itemCount: autocomplete.length,
-              padding: EdgeInsets.all(0),
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              //children: autocomplete,
-              itemBuilder: (context, index) {
-                return AnimationConfiguration.staggeredList(
-                  //key: keyListPlace,
-                  duration: const Duration(milliseconds: 375),
-                  position: index,
-                  child: SlideAnimation(
-                    verticalOffset: 44.0,
-                    child: FadeInAnimation(
-                      child: autocomplete[index],
-                    ),
-                  ),
-                );
-              },
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(4),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0, top: 12),
+                child: Text(
+                  textPlace,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
           ),
         ),
-      ));
-    } else {
-      return Container();
-    }
+      );
+    });
+    setState(() {
+      MapHelper.autocompleteVisible = true;
+      MapHelper.autocomplete = appoggio;
+    });
   }
 
   void handleMarkerClickMarker(double long, double lat) async {
     //nearby.clear();
-    keySnaplist.currentState.focusToInitialPosition();
+    MapHelper.keySnaplist.currentState.focusToInitialPosition();
     MapHelper.nearbyChargePoints.clear();
     for (var i = 0; i < MapHelper.markersSelected.length; i++) {
       if (MapHelper.getDistanceFromLatLonInKm(
@@ -237,24 +193,8 @@ class MapScreenState extends State<MapScreen>
     //print('MARKER PRESSED');
   }
 
-  void handlerChangeFocusChargePointList(double long, double lat) async {
-    MapHelper.isSliding = true;
-    final GoogleMapController controller =
-        await MapHelper.controllerCompleterMap.future;
-    await controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          bearing: 0,
-          target: LatLng(lat, long),
-          zoom: 17.0,
-        ),
-      ),
-    );
-    MapHelper.isSliding = false;
-  }
-
   //zoom on user current position
-  void _currentLocation() async {
+  void currentLocation() async {
     final GoogleMapController controller =
         await MapHelper.controllerCompleterMap.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
@@ -268,131 +208,17 @@ class MapScreenState extends State<MapScreen>
 
   void handlePrefix() {
     setState(() {
-      autocompleteVisible = false;
+      MapHelper.autocompleteVisible = false;
     });
   }
-
-  final GeolocatorService geo = GeolocatorService();
 
   FloatingActionButton buildCurrentLocationButton() {
     return FloatingActionButton(
       backgroundColor: Colors.white,
-      onPressed: _currentLocation,
+      onPressed: currentLocation,
       child: Icon(
         Icons.location_searching_sharp,
         color: Colors.black,
-      ),
-    );
-  }
-
-  Widget chargePointCardsBuilder(BuildContext context, int index) {
-    return Card(
-      margin: EdgeInsets.only(left: 5, right: 5, bottom: 30),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(13),
-        ),
-      ),
-      elevation: 5,
-      child: SizedBox(
-        child: Stack(children: [
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: ClipOval(
-              child: Material(
-                color: const Color(0xff44a688), // button color
-                child: InkWell(
-                  //splashColor: Colors.red, // inkwell color
-                  child: SizedBox(
-                    width: 56,
-                    height: 56,
-                    child: Icon(
-                      Icons.directions_rounded,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onTap: () async {
-                    String url =
-                        'https://www.google.com/maps/dir/?api=1&destination=${MapHelper.nearbyChargePoints[index].position.latitude},${MapHelper.nearbyChargePoints[index].position.longitude}';
-                    await canLaunch(url)
-                        ? await launch(url)
-                        : throw 'Could not launch google maps';
-                  },
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 17.5,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                MapHelper.nearbyChargePoints[index].address.city,
-                style: GoogleFonts.roboto(
-                    fontSize: 20, fontWeight: FontWeight.w200),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 10.5,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                MapHelper.nearbyChargePoints[index].id,
-                style: GoogleFonts.roboto(
-                    fontSize: 10, fontWeight: FontWeight.w200),
-              ),
-            ),
-          ),
-          Positioned(
-            //top: 35,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, top: 40, right: 20.0),
-              child: Column(
-                children: [
-                  Text(
-                    MapHelper.nearbyChargePoints[index].address.street,
-                    softWrap: true,
-                    style: GoogleFonts.roboto(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 80,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                MapHelper.nearbyChargePoints[index].owner,
-                style: GoogleFonts.roboto(
-                    fontSize: 15, fontWeight: FontWeight.w200),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 100,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                MapHelper.nearbyChargePoints[index].powerType,
-                style: GoogleFonts.roboto(
-                    fontSize: 15, fontWeight: FontWeight.w200),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: LoadingButton(index),
-          ),
-        ]),
-        width: (MediaQuery.of(context).size.width - 40),
-        height: 300,
       ),
     );
   }
@@ -414,8 +240,6 @@ class MapScreenState extends State<MapScreen>
     );
     super.initState();
   }
-
-  //ChargePoints data;
 
   @override
   Future<void> didChangeDependencies() async {
@@ -445,7 +269,6 @@ class MapScreenState extends State<MapScreen>
   @override
   Widget build(BuildContext context) {
     var snapshot = widget.snapshot;
-    print("SNAPSHOT: "+ snapshot.toString());
     return Stack(
       children: [
         Scaffold(
@@ -453,7 +276,7 @@ class MapScreenState extends State<MapScreen>
           body: GoogleMap(
             padding: EdgeInsets.only(bottom: 85),
             initialCameraPosition: snapshot == null
-                ? MapHelper.kRoma
+                ? MapHelper.kMilano
                 : CameraPosition(
                     target: LatLng(
                       snapshot.latitude,
@@ -479,7 +302,19 @@ class MapScreenState extends State<MapScreen>
               try {
                 MapHelper.controllerCompleterMap.complete(controller);
               } catch (e) {
-                throw e;
+                print(e);
+                snapshot != null
+                    ? MapHelper.controllerMap.moveCamera(
+                        CameraUpdate.newLatLng(
+                          LatLng(
+                            snapshot.latitude,
+                            snapshot.longitude,
+                          ),
+                        ),
+                      )
+                    : MapHelper.controllerMap.moveCamera(
+                        CameraUpdate.newCameraPosition(MapHelper.kMilano),
+                      );
               }
               setState(() {
                 //  _isMapLoading = false;
@@ -536,12 +371,12 @@ class MapScreenState extends State<MapScreen>
               onPressed: (int index) {
                 setState(() {
                   for (int buttonIndex = 0;
-                      buttonIndex < isSelected.length;
+                      buttonIndex < MapHelper.isSelected.length;
                       buttonIndex++) {
                     if (buttonIndex == index) {
-                      isSelected[buttonIndex] = true;
+                      MapHelper.isSelected[buttonIndex] = true;
                     } else {
-                      isSelected[buttonIndex] = false;
+                      MapHelper.isSelected[buttonIndex] = false;
                     }
                   }
                   switch (index) {
@@ -561,7 +396,7 @@ class MapScreenState extends State<MapScreen>
                   }
                 });
               },
-              isSelected: isSelected,
+              isSelected: MapHelper.isSelected,
             ),
           ),
         ),
@@ -571,7 +406,7 @@ class MapScreenState extends State<MapScreen>
               margin: EdgeInsets.only(left: 20, top: 20, right: 20),
               child: Row(
                 children: [
-                  Search(
+                  SearchBar(
                     callback: getAutocomplete,
                     prefixTap: handlePrefix,
                     width: MediaQuery.of(context).size.width - 40,
@@ -582,7 +417,7 @@ class MapScreenState extends State<MapScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _autocomplete(),
+                MapHelper.autocompleteWidget(context),
               ],
             ),
             Expanded(
@@ -600,16 +435,17 @@ class MapScreenState extends State<MapScreen>
                               height: 250,
                               width: MediaQuery.of(context).size.width,
                               child: ScrollSnapList(
-                                  key: keySnaplist,
+                                  key: MapHelper.keySnaplist,
                                   initialIndex: 0,
                                   itemCount:
                                       MapHelper.nearbyChargePoints.length,
-                                  itemBuilder: chargePointCardsBuilder,
+                                  itemBuilder:
+                                      MapHelper.chargePointCardsBuilder,
                                   itemSize:
                                       (MediaQuery.of(context).size.width - 40) +
                                           10,
                                   onItemFocus: (index) {
-                                    handlerChangeFocusChargePointList(
+                                    MapHelper.handlerChangeFocusChargePointList(
                                         MapHelper.nearbyChargePoints[index]
                                             .position.longitude,
                                         MapHelper.nearbyChargePoints[index]

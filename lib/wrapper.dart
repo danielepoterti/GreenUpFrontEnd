@@ -12,7 +12,8 @@ GlobalKey<MapScreenState> globalKey = GlobalKey();
 class Wrapper extends StatefulWidget {
   Position snapshot;
   String login;
-  Wrapper({@required this.snapshot, this.login});
+  Function getLogin;
+  Wrapper({@required this.snapshot, this.login, this.getLogin});
   @override
   _WrapperState createState() => _WrapperState();
 }
@@ -90,7 +91,7 @@ class _WrapperState extends State<Wrapper> with SingleTickerProviderStateMixin {
           CircularRevealAnimation(
             animation: animation,
             centerAlignment: Alignment.bottomCenter,
-            child: ProfileScreen(widget.login),
+            child: ProfileScreen(widget.login, widget.getLogin),
           ),
           
         ],

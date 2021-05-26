@@ -96,39 +96,38 @@ class AnimSearchBarState extends State<AnimSearchBar>
     );
   }
 
- void  onPressHandler() {
-                  print(toggle);
-                  setState(
-                    () {
-                      ///if the search bar is closed
-                      if (toggle == 0) {
-                        toggle = 1;
-                        setState(() {
-                          ///if the autoFocus is true, the keyboard will pop open, automatically
-                          if (widget.autoFocus)
-                            FocusScope.of(context).requestFocus(focusNode);
-                        });
+  void onPressHandler() {
+    print(toggle);
+    setState(
+      () {
+        ///if the search bar is closed
+        if (toggle == 0) {
+          toggle = 1;
+          setState(() {
+            ///if the autoFocus is true, the keyboard will pop open, automatically
+            if (widget.autoFocus)
+              FocusScope.of(context).requestFocus(focusNode);
+          });
 
-                        ///forward == expand
-                        _con.forward();
-                      } else {
-                        widget.onPrefixTap();
+          ///forward == expand
+          _con.forward();
+        } else {
+          widget.onPrefixTap();
 
-                        ///if the search bar is expanded
-                        toggle = 0;
+          ///if the search bar is expanded
+          toggle = 0;
 
-                        ///if the autoFocus is true, the keyboard will close, automatically
-                        setState(() {
-                          if (widget.autoFocus)
-                            FocusScope.of(context).unfocus();
-                        });
+          ///if the autoFocus is true, the keyboard will close, automatically
+          setState(() {
+            if (widget.autoFocus) FocusScope.of(context).unfocus();
+          });
 
-                        ///reverse == close
-                        _con.reverse();
-                      }
-                    },
-                  );
-                }
+          ///reverse == close
+          _con.reverse();
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
