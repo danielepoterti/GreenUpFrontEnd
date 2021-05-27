@@ -263,6 +263,7 @@ class MapScreenState extends State<MapScreen>
   @override
   void dispose() {
     super.dispose();
+    MapHelper.controllerCompleterMap = Completer();
     MapHelper.controllerChargePointCard.dispose();
   }
 
