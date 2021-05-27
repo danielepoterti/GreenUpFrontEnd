@@ -102,26 +102,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(
                       height: 5,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 20),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.call,
-                            size: 20,
-                          ),
-                          Text(
-                            '${dati['phone']}',
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.only(left: 20),
+                    //   child: Row(
+                    //     children: [
+                    //       Icon(
+                    //         Icons.call,
+                    //         size: 20,
+                    //       ),
+                    //       Text(
+                    //         '${dati['phone']}',
+                    //         style: TextStyle(
+                    //           fontSize: 20,
+                    //         ),
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ),
                     Padding(
                         padding: EdgeInsets.only(left: 20),
                         child: Row(

@@ -108,6 +108,7 @@ class _MyApp extends State<MyApp> {
               print(snapshot.data[0]); //if login is null => login screen
               if (login != null) {
                 return MaterialApp(
+                  debugShowCheckedModeBanner: false,
                     home: Wrapper(
                   snapshot: snapshot.data[0],
                   login: login,
@@ -115,6 +116,7 @@ class _MyApp extends State<MyApp> {
                 ));
               } else {
                 return MaterialApp(
+                  debugShowCheckedModeBanner: false,
                   home: Login(storage, getLogin),
                 );
               }
