@@ -68,12 +68,14 @@ class _TransactionScreenState extends State<TransactionScreen>
             /*timeInSecForIosWeb: 1*/
           );
 
-          Future.delayed(const Duration(seconds: 2), () {
+          Future.delayed(const Duration(seconds: 5), () async {
             Navigator.pop(context);
+            await MapHelper.dataTransactions.initTransactions(context);
           });
         }
       });
-      await MapHelper.dataTransactions.initTransactions(context);
+      
+      print(MapHelper.dataTransactions.transactions.toString());
     } on FirebaseFunctionsException catch (e) {
       print(e);
       print(e.code);

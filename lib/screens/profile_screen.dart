@@ -225,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height/2 +10,
+                top: MediaQuery.of(context).size.height / 2 + 10,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -247,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           await storage.deleteAll();
                           await auth.signOut();
                           Phoenix.rebirth(context);
-                         // widget.getLogin(widget.value);
+                          // widget.getLogin(widget.value);
                         },
                         child: Text(
                           'Log Off',

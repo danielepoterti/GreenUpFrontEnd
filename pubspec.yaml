@@ -79,6 +79,22 @@ flutter:
     - assets/images/chargingOccupied.png
     - assets/images/github.png
     - assets/images/skri.jpg
+    - assets/images/promo_1.png
+    - assets/images/promo_1_ex.png
+    - assets/images/promo_2.png
+    - assets/images/promo_2_ex.png
+    - assets/images/promo_3.png
+    - assets/images/promo_3_ex.png
+    - assets/images/promo_4.png
+    - assets/images/promo_4_ex.png
+    - assets/images/promo_5.png
+    - assets/images/promo_5_ex.png
+    - assets/images/promo_6.png
+    - assets/images/promo_6_ex.png
+    - assets/images/promo_7.png
+    - assets/images/promo_7_ex.png
+    - assets/images/promo_8.png
+    - assets/images/promo_8_ex.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

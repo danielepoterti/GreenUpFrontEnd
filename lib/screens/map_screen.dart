@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:green_up/providers/chargepoints_provider.dart';
@@ -38,31 +38,31 @@ class MapScreenState extends State<MapScreen>
     await _updateMarkers();
   }
 
-  void _onlyACMarkers() async {
-    final List<MapMarker> markers = [];
-    markers.addAll(MapHelper.dataChargePoints.markersAC);
-    MapHelper.markersSelected.clear();
-    MapHelper.markersSelected.addAll(MapHelper.dataChargePoints.markersAC);
-    MapHelper.clusterManager = await MapHelper.initClusterManager(
-      markers,
-      MapHelper.minClusterZoom,
-      MapHelper.maxClusterZoom,
-    );
-    await _updateMarkers();
-  }
+  // void _onlyACMarkers() async {
+  //   final List<MapMarker> markers = [];
+  //   markers.addAll(MapHelper.dataChargePoints.markersAC);
+  //   MapHelper.markersSelected.clear();
+  //   MapHelper.markersSelected.addAll(MapHelper.dataChargePoints.markersAC);
+  //   MapHelper.clusterManager = await MapHelper.initClusterManager(
+  //     markers,
+  //     MapHelper.minClusterZoom,
+  //     MapHelper.maxClusterZoom,
+  //   );
+  //   await _updateMarkers();
+  // }
 
-  void _onlyDCMarkers() async {
-    final List<MapMarker> markers = [];
-    markers.addAll(MapHelper.dataChargePoints.markersDC);
-    MapHelper.markersSelected.clear();
-    MapHelper.markersSelected.addAll(MapHelper.dataChargePoints.markersDC);
-    MapHelper.clusterManager = await MapHelper.initClusterManager(
-      markers,
-      MapHelper.minClusterZoom,
-      MapHelper.maxClusterZoom,
-    );
-    await _updateMarkers();
-  }
+  // void _onlyDCMarkers() async {
+  //   final List<MapMarker> markers = [];
+  //   markers.addAll(MapHelper.dataChargePoints.markersDC);
+  //   MapHelper.markersSelected.clear();
+  //   MapHelper.markersSelected.addAll(MapHelper.dataChargePoints.markersDC);
+  //   MapHelper.clusterManager = await MapHelper.initClusterManager(
+  //     markers,
+  //     MapHelper.minClusterZoom,
+  //     MapHelper.maxClusterZoom,
+  //   );
+  //   await _updateMarkers();
+  // }
 
   /// Gets the markers and clusters to be displayed on the map for the current zoom level and
   /// updates state.
@@ -337,70 +337,70 @@ class MapScreenState extends State<MapScreen>
                 )
               : null,
         ),
-        Positioned(
-          left: 20,
-          top: MediaQuery.of(context).size.height / 2,
-          child: Container(
-            padding: EdgeInsets.zero,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              //border: Border.all(color: Colors.black, width: 1.0),
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            ),
-            child: ToggleButtons(
-              borderRadius: BorderRadius.circular(20),
-              borderColor: Colors.white,
-              selectedBorderColor: Colors.white,
-              fillColor: Colors.white,
-              //highlightColor: Colors.white,
-              selectedColor: const Color(0xff44a688),
-              direction: Axis.vertical,
-              children: <Widget>[
-                Text(
-                  "AC/DC",
-                  style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
-                ),
-                Text(
-                  "AC",
-                  style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
-                ),
-                Text(
-                  "DC",
-                  style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
-                ),
-              ],
-              onPressed: (int index) {
-                setState(() {
-                  for (int buttonIndex = 0;
-                      buttonIndex < MapHelper.isSelected.length;
-                      buttonIndex++) {
-                    if (buttonIndex == index) {
-                      MapHelper.isSelected[buttonIndex] = true;
-                    } else {
-                      MapHelper.isSelected[buttonIndex] = false;
-                    }
-                  }
-                  switch (index) {
-                    case 0:
-                      print("AC/DC");
-                      _initMarkers();
-                      break;
-                    case 1:
-                      print("AC");
-                      _onlyACMarkers();
-                      break;
-                    case 2:
-                      print("DC");
-                      _onlyDCMarkers();
-                      break;
-                    default:
-                  }
-                });
-              },
-              isSelected: MapHelper.isSelected,
-            ),
-          ),
-        ),
+        // Positioned(
+        //   left: 20,
+        //   top: MediaQuery.of(context).size.height / 2,
+        //   child: Container(
+        //     padding: EdgeInsets.zero,
+        //     decoration: BoxDecoration(
+        //       color: Colors.white,
+        //       //border: Border.all(color: Colors.black, width: 1.0),
+        //       borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        //     ),
+        //     child: ToggleButtons(
+        //       borderRadius: BorderRadius.circular(20),
+        //       borderColor: Colors.white,
+        //       selectedBorderColor: Colors.white,
+        //       fillColor: Colors.white,
+        //       //highlightColor: Colors.white,
+        //       selectedColor: const Color(0xff44a688),
+        //       direction: Axis.vertical,
+        //       children: <Widget>[
+        //         Text(
+        //           "AC/DC",
+        //           style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
+        //         ),
+        //         Text(
+        //           "AC",
+        //           style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
+        //         ),
+        //         Text(
+        //           "DC",
+        //           style: GoogleFonts.roboto(fontWeight: FontWeight.w800),
+        //         ),
+        //       ],
+        //       onPressed: (int index) {
+        //         setState(() {
+        //           for (int buttonIndex = 0;
+        //               buttonIndex < MapHelper.isSelected.length;
+        //               buttonIndex++) {
+        //             if (buttonIndex == index) {
+        //               MapHelper.isSelected[buttonIndex] = true;
+        //             } else {
+        //               MapHelper.isSelected[buttonIndex] = false;
+        //             }
+        //           }
+        //           switch (index) {
+        //             case 0:
+        //               print("AC/DC");
+        //               _initMarkers();
+        //               break;
+        //             case 1:
+        //               print("AC");
+        //               _onlyACMarkers();
+        //               break;
+        //             case 2:
+        //               print("DC");
+        //               _onlyDCMarkers();
+        //               break;
+        //             default:
+        //           }
+        //         });
+        //       },
+        //       isSelected: MapHelper.isSelected,
+        //     ),
+        //   ),
+        // ),
         Column(
           children: [
             Container(
@@ -421,47 +421,30 @@ class MapScreenState extends State<MapScreen>
                 MapHelper.autocompleteWidget(context),
               ],
             ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 120),
-                    child: Container(
-                      child: Row(
-                        children: [
-                          SlideTransition(
-                            position: MapHelper.offsetAnimation,
-                            child: SizedBox(
-                              height: 250,
-                              width: MediaQuery.of(context).size.width,
-                              child: ScrollSnapList(
-                                  key: MapHelper.keySnaplist,
-                                  initialIndex: 0,
-                                  itemCount:
-                                      MapHelper.nearbyChargePoints.length,
-                                  itemBuilder:
-                                      MapHelper.chargePointCardsBuilder,
-                                  itemSize:
-                                      (MediaQuery.of(context).size.width - 40) +
-                                          10,
-                                  onItemFocus: (index) {
-                                    MapHelper.handlerChangeFocusChargePointList(
-                                        MapHelper.nearbyChargePoints[index]
-                                            .position.longitude,
-                                        MapHelper.nearbyChargePoints[index]
-                                            .position.latitude);
-                                  }),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
+        ),
+        Positioned(
+          bottom: 30,
+          child: SlideTransition(
+            position: MapHelper.offsetAnimation,
+            child: SizedBox(
+              height: 400,
+              width: MediaQuery.of(context).size.width,
+              child: ScrollSnapList(
+                  key: MapHelper.keySnaplist,
+                  initialIndex: 0,
+                  itemCount: MapHelper.nearbyChargePoints.length,
+                  itemBuilder: MapHelper.chargePointCardsBuilder,
+                  itemSize: (MediaQuery.of(context).size.width - 40) + 10,
+                  onItemFocus: (index) {
+                    MapHelper.handlerChangeFocusChargePointList(
+                        MapHelper
+                            .nearbyChargePoints[index].position.longitude,
+                        MapHelper
+                            .nearbyChargePoints[index].position.latitude);
+                  }),
+            ),
+          ),
         ),
       ],
     );

@@ -35,7 +35,7 @@ class _LoginState extends State<Login> {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
         Fluttertoast.showToast(
-          msg: "Utente non trovato",
+          msg: 'No user found for that email.',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           /*timeInSecForIosWeb: 1*/
@@ -43,7 +43,7 @@ class _LoginState extends State<Login> {
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
         Fluttertoast.showToast(
-          msg: "Password non corretta",
+          msg: 'Wrong password provided for that user.',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           /*timeInSecForIosWeb: 1*/

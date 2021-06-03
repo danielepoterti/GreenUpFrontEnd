@@ -109,11 +109,12 @@ class _MyApp extends State<MyApp> {
               if (login != null) {
                 return MaterialApp(
                   debugShowCheckedModeBanner: false,
-                    home: Wrapper(
-                  snapshot: snapshot.data[0],
-                  login: login,
-                  getLogin: getLogin,
-                ));
+                  home: Wrapper(
+                    snapshot: snapshot.data[0],
+                    login: login,
+                    getLogin: getLogin,
+                  ),
+                );
               } else {
                 return MaterialApp(
                   debugShowCheckedModeBanner: false,

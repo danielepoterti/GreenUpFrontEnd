@@ -282,115 +282,193 @@ class MapHelper {
   }
 
   static Widget chargePointCardsBuilder(BuildContext context, int index) {
-    return Card(
-      margin: EdgeInsets.only(left: 5, right: 5, bottom: 30),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(13),
+    return Stack(children: [
+      Card(
+        margin: EdgeInsets.only(left: 5, right: 5, bottom: 30),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(13),
+          ),
         ),
-      ),
-      elevation: 5,
-      child: SizedBox(
-        child: Stack(children: [
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: ClipOval(
-              child: Material(
-                color: const Color(0xff44a688), // button color
-                child: InkWell(
-                  //splashColor: Colors.red, // inkwell color
-                  child: SizedBox(
-                    width: 56,
-                    height: 56,
-                    child: Icon(
-                      Icons.directions_rounded,
-                      color: Colors.white,
+        elevation: 5,
+        child: SizedBox(
+          child: Stack(children: [
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: ClipOval(
+                child: Material(
+                  color: const Color(0xff44a688), // button color
+                  child: InkWell(
+                    //splashColor: Colors.red, // inkwell color
+                    child: SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: Icon(
+                        Icons.directions_rounded,
+                        color: Colors.white,
+                      ),
                     ),
+                    onTap: () async {
+                      String url =
+                          'https://www.google.com/maps/dir/?api=1&destination=${MapHelper.nearbyChargePoints[index].position.latitude},${MapHelper.nearbyChargePoints[index].position.longitude}';
+                      await canLaunch(url)
+                          ? await launch(url)
+                          : throw 'Could not launch google maps';
+                    },
                   ),
-                  onTap: () async {
-                    String url =
-                        'https://www.google.com/maps/dir/?api=1&destination=${MapHelper.nearbyChargePoints[index].position.latitude},${MapHelper.nearbyChargePoints[index].position.longitude}';
-                    await canLaunch(url)
-                        ? await launch(url)
-                        : throw 'Could not launch google maps';
-                  },
                 ),
               ),
             ),
-          ),
-          Positioned(
-            top: 17.5,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                MapHelper.nearbyChargePoints[index].address.city,
-                style: GoogleFonts.roboto(
-                    fontSize: 20, fontWeight: FontWeight.w200),
+            Positioned(
+              top: 17.5,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Text(
+                  MapHelper.nearbyChargePoints[index].address.city,
+                  style: GoogleFonts.roboto(
+                      fontSize: 20, fontWeight: FontWeight.w200),
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 10.5,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                MapHelper.nearbyChargePoints[index].id,
-                style: GoogleFonts.roboto(
-                    fontSize: 10, fontWeight: FontWeight.w200),
+            Positioned(
+              top: 10.5,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Text(
+                  MapHelper.nearbyChargePoints[index].id,
+                  style: GoogleFonts.roboto(
+                      fontSize: 10, fontWeight: FontWeight.w200),
+                ),
               ),
             ),
-          ),
-          Positioned(
-            //top: 35,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, top: 40, right: 20.0),
-              child: Column(
-                children: [
-                  Text(
-                    MapHelper.nearbyChargePoints[index].address.street,
-                    softWrap: true,
-                    style: GoogleFonts.roboto(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+            Positioned(
+              //top: 35,
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(left: 20.0, top: 40, right: 20.0),
+                child: Column(
+                  children: [
+                    Text(
+                      MapHelper.nearbyChargePoints[index].address.street,
+                      softWrap: true,
+                      style: GoogleFonts.roboto(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 80,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Text(
+                  MapHelper.nearbyChargePoints[index].owner,
+                  style: GoogleFonts.roboto(
+                      fontSize: 15, fontWeight: FontWeight.w200),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 100,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Text(
+                  MapHelper.nearbyChargePoints[index].powerType,
+                  style: GoogleFonts.roboto(
+                      fontSize: 15, fontWeight: FontWeight.w200),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              left: 20,
+              child: LoadingButton(index),
+            ),
+          ]),
+          width: (MediaQuery.of(context).size.width - 40),
+          height: 210,
+        ),
+      ),
+      MapHelper.nearbyChargePoints[index].promo
+          ? Positioned(
+              top: 200,
+              left: MediaQuery.of(context).size.width / 16,
+              child: SizedBox(
+                height: 100,
+                width: MediaQuery.of(context).size.width - 80,
+                child: Card(
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: MapHelper.nearbyChargePoints[index].status ==
+                          Status.promo1
+                      ? Image.asset(
+                          "assets/images/promo_1_ex.png",
+                          fit: BoxFit.fill,
+                        )
+                      : MapHelper.nearbyChargePoints[index].status ==
+                              Status.promo2
+                          ? Image.asset(
+                              "assets/images/promo_2_ex.png",
+                              fit: BoxFit.fill,
+                            )
+                          : MapHelper.nearbyChargePoints[index].status ==
+                                  Status.promo3
+                              ? Image.asset(
+                                  "assets/images/promo_3_ex.png",
+                                  fit: BoxFit.fill,
+                                )
+                              : MapHelper.nearbyChargePoints[index].status ==
+                                      Status.promo4
+                                  ? Image.asset(
+                                      "assets/images/promo_4_ex.png",
+                                      fit: BoxFit.fill,
+                                    )
+                                  : MapHelper.nearbyChargePoints[index]
+                                              .status ==
+                                          Status.promo5
+                                      ? Image.asset(
+                                          "assets/images/promo_5_ex.png",
+                                          fit: BoxFit.fill,
+                                        )
+                                      : MapHelper.nearbyChargePoints[index]
+                                                  .status ==
+                                              Status.promo6
+                                          ? Image.asset(
+                                              "assets/images/promo_6_ex.png",
+                                              fit: BoxFit.fill,
+                                            )
+                                          : MapHelper.nearbyChargePoints[index]
+                                                      .status ==
+                                                  Status.promo7
+                                              ? Image.asset(
+                                                  "assets/images/promo_7_ex.png",
+                                                  fit: BoxFit.fill,
+                                                )
+                                              : MapHelper
+                                                          .nearbyChargePoints[
+                                                              index]
+                                                          .status ==
+                                                      Status.promo8
+                                                  ? Image.asset(
+                                                      "assets/images/promo_8_ex.png",
+                                                      fit: BoxFit.fill,
+                                                    )
+                                                  : SizedBox.shrink(),
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            top: 80,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                MapHelper.nearbyChargePoints[index].owner,
-                style: GoogleFonts.roboto(
-                    fontSize: 15, fontWeight: FontWeight.w200),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 100,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                MapHelper.nearbyChargePoints[index].powerType,
-                style: GoogleFonts.roboto(
-                    fontSize: 15, fontWeight: FontWeight.w200),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: LoadingButton(index),
-          ),
-        ]),
-        width: (MediaQuery.of(context).size.width - 40),
-        height: 300,
-      ),
-    );
+            )
+          : SizedBox.shrink(),
+    ]);
   }
 
   static void handlerChangeFocusChargePointList(double long, double lat) async {

@@ -21,6 +21,14 @@ enum Status {
   available,
   occupied,
   unavailable,
+  promo1,
+  promo2,
+  promo3,
+  promo4,
+  promo5,
+  promo6,
+  promo7,
+  promo8
 }
 
 enum PlugType {
@@ -54,6 +62,7 @@ class ChargePoint {
   final double cost; // costo a chilowatt
   final LatLng position;
   final String owner; // coordinate geografiche
+  final bool promo;
 
   ChargePoint({
     @required this.id,
@@ -65,5 +74,6 @@ class ChargePoint {
     @required this.cost,
     @required this.position,
     @required this.owner,
+    @required this.promo
   });
 }
