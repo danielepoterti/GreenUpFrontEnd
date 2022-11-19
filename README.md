@@ -1,3 +1,3 @@
 # GreenUp
 
-Fortend used in GreenUp project
+Frontend used in GreenUp project
