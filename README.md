@@ -1,4 +1,3 @@
-# Ciro GreenUp
+# GreenUp
 
-Il frontEnd Ciro ti ruba il portafoglio senza chiederti il permesso.
-
+Fortend used in GreenUp project
